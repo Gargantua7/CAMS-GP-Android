@@ -5,6 +5,7 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.FabPosition
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -47,7 +48,9 @@ class MainActivity : ComponentActivity() {
                     Surface(color = MaterialTheme.colors.background) {
                         Scaffold(
                             topBar = { topBar() },
-                            bottomBar = { bottomAppBar(nav) }
+                            bottomBar = { bottomAppBar(nav) },
+                            floatingActionButton = { item[viewModel.select].fab() },
+                            floatingActionButtonPosition = FabPosition.End
                         ) {
                             NavHost(
                                 navController = nav,
@@ -66,7 +69,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 }
 
 

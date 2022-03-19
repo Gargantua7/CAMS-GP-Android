@@ -63,6 +63,15 @@ object Home : Page() {
 
     }
 
+    @Composable
+    override fun fab() {
+        FloatingActionButton(
+            backgroundColor = MaterialTheme.colors.primary,
+            contentColor = Color.White,
+            onClick = { /*TODO*/ }) {
+            Icon(Icons.Filled.Add, "add")
+        }
+    }
 
     @OptIn(ExperimentalMaterialApi::class)
     @Composable

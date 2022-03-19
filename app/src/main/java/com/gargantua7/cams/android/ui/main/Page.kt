@@ -12,6 +12,9 @@ sealed class Page {
 
     @Composable
     abstract fun draw()
+
+    @Composable
+    abstract fun fab()
 }
 
 val item = listOf(Home, Event, Message, Me)
