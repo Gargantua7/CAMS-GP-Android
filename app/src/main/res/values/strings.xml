@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">CAMS-GP-Android</string>
+    <string name="home">Home</string>
+    <string name="event">Event</string>
+    <string name="message">Message</string>
+    <string name="me">Me</string>
+    <string name="network_error">Network Error</string>
+    <string name="press_retry">Press Retry</string>
+    <string name="loading">Loading…</string>
+</resources>
