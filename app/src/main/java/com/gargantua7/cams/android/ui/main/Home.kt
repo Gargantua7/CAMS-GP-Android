@@ -1,6 +1,7 @@
 package com.gargantua7.cams.android.ui.main
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -9,25 +10,27 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Lens
-import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.gargantua7.cams.android.CAMSApplication
 import com.gargantua7.cams.android.R
 import com.gargantua7.cams.android.logic.model.Repair
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import java.time.format.DateTimeFormatter
 
 /**
@@ -43,24 +46,33 @@ object Home : Page() {
     override fun draw() {
 
         val repairs = viewModel(RepairViewModel::class.java).repairs.collectAsLazyPagingItems()
+        val isRefresh = rememberSwipeRefreshState(false)
 
-        when (repairs.loadState.refresh) {
-            is LoadState.NotLoading -> LazyColumn {
-                items(repairs) { repair ->
-                    repair?.let { repairItem(repair = it) }
+        SwipeRefresh(state = isRefresh,
+            indicator = { state, trigger ->
+                SwipeRefreshIndicator(
+                    state, trigger,
+                    contentColor = MaterialTheme.colors.primary
+                )
+            },
+            onRefresh = { repairs.refresh() }) {
+            isRefresh.isRefreshing = repairs.loadState.refresh is LoadState.Loading && repairs.itemCount > 0
+            when (repairs.loadState.refresh) {
+                is LoadState.NotLoading -> list(repairs)
+                is LoadState.Loading -> {
+                    if (repairs.itemCount > 0) list(repairs)
+                    else loadingPage()
                 }
-                Log.d("repair ui state", repairs.loadState.append.toString())
-                when (repairs.loadState.append) {
-                    is LoadState.Loading -> item { loadItem() }
-                    is LoadState.Error -> item { errorItem { repairs.retry() } }
-                    else -> Unit
+                is LoadState.Error -> {
+                    if (repairs.itemCount > 0) {
+                        list(repairs)
+                        Toast.makeText(LocalContext.current, stringResource(R.string.network_error), Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                    else errorPage { repairs.refresh() }
                 }
             }
-            is LoadState.Loading -> loadingPage()
-            is LoadState.Error -> errorPage { repairs.refresh() }
-            else -> Unit
         }
-
     }
 
     @Composable
@@ -73,18 +85,35 @@ object Home : Page() {
         }
     }
 
+    @Composable
+    fun list(repairs: LazyPagingItems<Repair>) {
+        LazyColumn {
+            item { Spacer(modifier = Modifier.height(2.5.dp)) }
+            items(repairs) { repair ->
+                repair?.let { repairItem(repair = it) }
+            }
+            Log.d("repair ui state", repairs.loadState.append.toString())
+            when (repairs.loadState.append) {
+                is LoadState.Loading -> item { loadingItem() }
+                is LoadState.Error -> item { errorItem { repairs.retry() } }
+                else -> Unit
+            }
+            item { Spacer(modifier = Modifier.height(2.5.dp)) }
+        }
+    }
+
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     fun repairItem(repair: Repair) {
         Card(
             modifier = Modifier
-                .padding(10.dp)
+                .padding(5.dp, 2.5.dp)
                 .background(
                     color = MaterialTheme.colors.surface,
                     shape = RoundedCornerShape(20.dp)
                 ),
             onClick = {
-
+                /* TODO */
             }
         ) {
             Column {
@@ -151,7 +180,7 @@ object Home : Page() {
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
                         text = if (repair.state) "OPEN" else "CLOSE",
-                        fontSize = 16.sp,
+                        fontSize = 12.sp,
                         color = MaterialTheme.colors.onBackground
                     )
                     Spacer(modifier = Modifier.width(5.dp))
@@ -159,7 +188,7 @@ object Home : Page() {
                         Icons.Filled.Lens,
                         "Lens",
                         tint = if (repair.state) Color.Green else Color.Red,
-                        modifier = Modifier.size(15.dp)
+                        modifier = Modifier.size(11.dp)
                     )
                     Spacer(modifier = Modifier.width(15.dp))
                 }
@@ -181,7 +210,7 @@ object Home : Page() {
     }
 
     @Composable
-    fun loadItem() {
+    fun loadingItem() {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
@@ -209,6 +238,7 @@ object Home : Page() {
                 tint = MaterialTheme.colors.onSurface
             )
             Spacer(modifier = Modifier.size(10.dp))
+            Text(text = stringResource(R.string.network_error), color = MaterialTheme.colors.onSurface)
             Text(text = stringResource(R.string.press_retry), color = MaterialTheme.colors.onSurface)
             Spacer(modifier = Modifier.size(48.dp))
         }
@@ -224,7 +254,6 @@ object Home : Page() {
                 .padding(10.dp)
                 .clickable(interactionSource = MutableInteractionSource(), indication = null, onClick = onClick)
         ) {
-            Text(text = stringResource(R.string.network_error), color = MaterialTheme.colors.onSurface)
             Text(text = stringResource(R.string.press_retry), color = MaterialTheme.colors.onSurface)
         }
     }
