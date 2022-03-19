@@ -15,7 +15,7 @@ import androidx.navigation.NavHostController
 @Composable
 fun bottomAppBar(navController: NavHostController) {
     val vm = viewModel<MainViewModel>()
-    BottomAppBar(backgroundColor = MaterialTheme.colors.background) {
+    BottomAppBar(backgroundColor = MaterialTheme.colors.surface) {
         item.forEachIndexed { i, page ->
             BottomNavigationItem(
                 selected = vm.select == i,
