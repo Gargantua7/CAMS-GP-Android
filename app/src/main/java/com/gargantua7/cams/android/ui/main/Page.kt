@@ -17,6 +17,6 @@ sealed class Page {
     abstract fun fab()
 }
 
-val item = listOf(Home, Event, Message, Me)
+val item = itemsWithList + listOf(Messages, Me)
 
 

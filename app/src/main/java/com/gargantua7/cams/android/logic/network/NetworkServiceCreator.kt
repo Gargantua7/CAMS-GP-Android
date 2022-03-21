@@ -1,5 +1,6 @@
 package com.gargantua7.cams.android.logic.network
 
+import com.gargantua7.cams.android.ui.util.toLocalDateTime
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
@@ -8,7 +9,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Type
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 /**
  * @author Gargantua7
@@ -20,14 +20,11 @@ object NetworkServiceCreator {
     private val gson = GsonBuilder().run {
         registerTypeAdapter(LocalDateTime::class.java, object : JsonDeserializer<LocalDateTime> {
             override fun deserialize(
-                json: JsonElement?,
+                json: JsonElement,
                 typeOfT: Type?,
                 context: JsonDeserializationContext?
             ): LocalDateTime {
-                return LocalDateTime.parse(
-                    json?.asJsonPrimitive?.asString,
-                    DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")
-                )
+                return json.asJsonPrimitive.asString.toLocalDateTime()
             }
         })
         create()
