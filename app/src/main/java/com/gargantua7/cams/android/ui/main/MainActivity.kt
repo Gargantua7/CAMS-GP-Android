@@ -22,9 +22,11 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 class MainActivity : ComponentActivity() {
 
-    val viewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
+    private val viewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
 
-    val repairViewModel by lazy { ViewModelProvider(this).get(RepairViewModel::class.java) }
+    private val repairViewModel by lazy { ViewModelProvider(this).get(RepairViewModel::class.java) }
+
+    private val eventViewModel by lazy { ViewModelProvider(this).get(EventViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
