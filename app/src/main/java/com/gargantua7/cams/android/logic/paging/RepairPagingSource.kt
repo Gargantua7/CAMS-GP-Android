@@ -1,4 +1,4 @@
-package com.gargantua7.cams.android.logic.repo
+package com.gargantua7.cams.android.logic.paging
 
 import android.util.Log
 import androidx.paging.PagingSource
