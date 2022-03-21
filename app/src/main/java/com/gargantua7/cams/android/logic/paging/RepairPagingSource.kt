@@ -5,7 +5,6 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.gargantua7.cams.android.logic.model.Repair
 import com.gargantua7.cams.android.logic.model.RepairSearcher
-import com.gargantua7.cams.android.logic.network.RepairService
 import com.gargantua7.cams.android.logic.repository.RepairRepository
 
 /**
