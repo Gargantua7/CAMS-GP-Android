@@ -12,6 +12,7 @@ private val DarkColorPalette = darkColors(
     primaryVariant = ContrastingColor,
     surface = Color.Black,
     onSurface = Color.LightGray,
+    secondary = Color.DarkGray,
     background = Color(0xFF333333),
     onBackground = Color.White
 )
@@ -21,6 +22,7 @@ private val LightColorPalette = lightColors(
     primaryVariant = ContrastingColor,
     surface = Color.White,
     onSurface = Color.DarkGray,
+    secondary = Color.LightGray,
     background = Color(0xFFEEEEEE),
     onBackground = Color.Black
 
