@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.gargantua7.cams.android.R
+import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.ui.util.stringResource
 
 /**

@@ -8,7 +8,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Message
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.gargantua7.cams.android.R
+import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.ui.util.stringResource
 
 /**
