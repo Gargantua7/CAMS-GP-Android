@@ -14,8 +14,11 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -29,6 +32,7 @@ import com.gargantua7.cams.gp.android.ui.theme.CAMSGPAndroidTheme
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.launch
 
 class SignInActivity : AppCompatActivity() {
 
@@ -53,7 +57,11 @@ class SignInActivity : AppCompatActivity() {
                         darkIcons = MaterialTheme.colors.isLight
                     )
                     Surface(color = MaterialTheme.colors.background) {
+                        val scaffoldState = rememberScaffoldState()
+                        val scope = rememberCoroutineScope()
+                        val focus = LocalFocusManager.current
                         Scaffold(
+                            scaffoldState = scaffoldState,
                             topBar = { topBar() }
                         ) {
                             Column(
@@ -108,6 +116,16 @@ class SignInActivity : AppCompatActivity() {
                                         }
                                     },
                                     keyboardType = KeyboardType.Password,
+                                    keyboardActions = KeyboardActions(
+                                        onDone = {
+                                            focus.clearFocus()
+                                            if (
+                                                !viewModel.loading &&
+                                                viewModel.username.isNotBlank() &&
+                                                viewModel.password.isNotBlank()
+                                            ) viewModel.login()
+                                        }
+                                    ),
                                     imeAction = ImeAction.Done,
                                     visualTransformation =
                                     if (viewModel.passwordVisibility) VisualTransformation.None
@@ -117,6 +135,25 @@ class SignInActivity : AppCompatActivity() {
                                     }
                                 )
                                 button()
+                                if (viewModel.errorMsg.isNotBlank()) {
+                                    scope.launch {
+                                        scaffoldState.snackbarHostState.showSnackbar(viewModel.errorMsg)
+                                    }
+                                }
+                                if (viewModel.loading) {
+                                    Column(
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                    ) {
+                                        CircularProgressIndicator()
+                                    }
+                                }
+                                if (viewModel.success) {
+                                    Toast.makeText(this@SignInActivity, "Success", Toast.LENGTH_SHORT).show()
+                                    finish()
+                                }
                             }
                         }
                     }
@@ -189,6 +226,7 @@ class SignInActivity : AppCompatActivity() {
             shape = RoundedCornerShape(5.dp),
             visualTransformation = visualTransformation,
             onValueChange = { onValueChange(it) },
+            readOnly = viewModel.loading,
             modifier = Modifier
                 .padding(0.dp, 5.dp)
                 .fillMaxWidth()
@@ -197,17 +235,21 @@ class SignInActivity : AppCompatActivity() {
 
     @Composable
     fun button() {
+        val focus = LocalFocusManager.current
         Button(
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = MaterialTheme.colors.primary,
                 contentColor = Color.White,
                 disabledBackgroundColor = MaterialTheme.colors.secondary
             ),
-            enabled = viewModel.username.isNotBlank() && viewModel.password.isNotBlank(),
+            enabled = !viewModel.loading && viewModel.username.isNotBlank() && viewModel.password.isNotBlank(),
             shape = RoundedCornerShape(5.dp),
             modifier = Modifier.padding(0.dp, 5.dp),
             contentPadding = PaddingValues(10.dp),
-            onClick = { Toast.makeText(this, "Login", Toast.LENGTH_SHORT).show() }
+            onClick = {
+                focus.clearFocus()
+                viewModel.login()
+            }
         ) {
             Spacer(modifier = Modifier.weight(1f))
             Icon(imageVector = Icons.Filled.Login, contentDescription = "Login")
