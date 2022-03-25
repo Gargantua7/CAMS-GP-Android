@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.gargantua7.cams.gp.android.CAMSApplication
 import com.gargantua7.cams.gp.android.logic.exception.AuthorizedException
 import com.gargantua7.cams.gp.android.logic.model.Secret
+import com.gargantua7.cams.gp.android.logic.repository.PersonRepository
 import com.gargantua7.cams.gp.android.logic.repository.SecretRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -39,6 +40,8 @@ class SignInViewModel: ViewModel() {
                 val session = result.getOrNull()?.get("session") ?: ""
                 CAMSApplication.username = username
                 CAMSApplication.session.value = session
+                SecretRepository.saveSession()
+                PersonRepository.saveUsername()
                 errorMsg = "Login Success"
                 delay(1000)
                 success = true

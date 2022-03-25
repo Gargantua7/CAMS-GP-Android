@@ -2,7 +2,6 @@ package com.gargantua7.cams.gp.android.ui.person
 
 import android.os.Bundle
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
@@ -151,7 +150,6 @@ class SignInActivity : AppCompatActivity() {
                                     }
                                 }
                                 if (viewModel.success) {
-                                    Toast.makeText(this@SignInActivity, "Success", Toast.LENGTH_SHORT).show()
                                     finish()
                                 }
                             }

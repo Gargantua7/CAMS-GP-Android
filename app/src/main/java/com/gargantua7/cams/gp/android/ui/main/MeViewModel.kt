@@ -8,10 +8,8 @@ import androidx.lifecycle.ViewModel
 /**
  * @author Gargantua7
  */
-class MainViewModel: ViewModel() {
+class MeViewModel : ViewModel() {
 
-    var select by mutableStateOf(0)
-
-    var value by mutableStateOf("")
+    var logoutDialog by mutableStateOf(false)
 
 }

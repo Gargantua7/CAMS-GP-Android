@@ -5,10 +5,8 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.FabPosition
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
+import androidx.compose.material.*
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
@@ -16,9 +14,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.gargantua7.cams.gp.android.CAMSApplication
 import com.gargantua7.cams.gp.android.ui.theme.CAMSGPAndroidTheme
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -43,12 +43,15 @@ class MainActivity : ComponentActivity() {
             val nav = rememberNavController()
             CAMSGPAndroidTheme {
                 ProvideWindowInsets(consumeWindowInsets = false) {
+                    val scaffoldState = rememberScaffoldState()
+                    val scope = rememberCoroutineScope()
                     rememberSystemUiController().setStatusBarColor(
                         Color.Transparent,
                         darkIcons = MaterialTheme.colors.isLight
                     )
                     Surface(color = MaterialTheme.colors.background) {
                         Scaffold(
+                            scaffoldState = scaffoldState,
                             topBar = { topBar() },
                             bottomBar = { bottomAppBar(nav) },
                             floatingActionButton = { item[viewModel.select].fab() },
@@ -63,6 +66,11 @@ class MainActivity : ComponentActivity() {
                                     composable(page.title) {
                                         page.draw()
                                     }
+                                }
+                            }
+                            CAMSApplication.errorMsg?.let {
+                                scope.launch {
+                                    scaffoldState.snackbarHostState.showSnackbar(it)
                                 }
                             }
                         }
