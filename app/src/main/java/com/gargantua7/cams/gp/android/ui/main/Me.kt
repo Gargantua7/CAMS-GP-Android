@@ -43,63 +43,74 @@ object Me : Page() {
         val vm = viewModel(MeViewModel::class.java)
         dialog()
         Column {
-            if (user != null) {
-                Column {
-                    Row(
-                        modifier = Modifier
-                            .background(MaterialTheme.colors.surface)
-                            .clickable {
-                            }
-                    ) {
-                        Column(
+            if (user != null || CAMSApplication.session.value != null) {
+                user?.let {
+                    Column {
+                        Row(
                             modifier = Modifier
-                                .padding(15.dp)
-                                .fillMaxWidth()
+                                .background(MaterialTheme.colors.surface)
+                                .clickable {
+                                }
                         ) {
-                            Text(
-                                text = user!!.name,
-                                fontSize = 36.sp,
-                                color = MaterialTheme.colors.onBackground
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Row(horizontalArrangement = Arrangement.Center) {
-                                Icon(
-                                    Icons.Filled.Tag,
-                                    contentDescription = "id",
-                                    tint = MaterialTheme.colors.onSurface
+                            Column(
+                                modifier = Modifier
+                                    .padding(15.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = it.name,
+                                    fontSize = 36.sp,
+                                    color = MaterialTheme.colors.onBackground
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
-                                Text(
-                                    text = user!!.username,
-                                    color = MaterialTheme.colors.onSurface
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Row(horizontalArrangement = Arrangement.Center) {
-                                Icon(
-                                    Icons.Filled.Groups,
-                                    contentDescription = "dep",
-                                    tint = MaterialTheme.colors.onSurface
-                                )
+                                Row(horizontalArrangement = Arrangement.Center) {
+                                    Icon(
+                                        Icons.Filled.Tag,
+                                        contentDescription = "id",
+                                        tint = MaterialTheme.colors.onSurface
+                                    )
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Text(
+                                        text = it.username,
+                                        color = MaterialTheme.colors.onSurface
+                                    )
+                                }
                                 Spacer(modifier = Modifier.width(10.dp))
-                                Text(
-                                    text = user!!.dep,
-                                    color = MaterialTheme.colors.onSurface
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Row(horizontalArrangement = Arrangement.Center) {
-                                Icon(
-                                    Icons.Filled.Badge,
-                                    contentDescription = "name",
-                                    tint = MaterialTheme.colors.onSurface
-                                )
+                                Row(horizontalArrangement = Arrangement.Center) {
+                                    Icon(
+                                        Icons.Filled.Groups,
+                                        contentDescription = "dep",
+                                        tint = MaterialTheme.colors.onSurface
+                                    )
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Text(
+                                        text = it.dep,
+                                        color = MaterialTheme.colors.onSurface
+                                    )
+                                }
                                 Spacer(modifier = Modifier.width(10.dp))
-                                Text(
-                                    text = user!!.title,
-                                    color = MaterialTheme.colors.onSurface
-                                )
+                                Row(horizontalArrangement = Arrangement.Center) {
+                                    Icon(
+                                        Icons.Filled.Badge,
+                                        contentDescription = "name",
+                                        tint = MaterialTheme.colors.onSurface
+                                    )
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Text(
+                                        text = it.title,
+                                        color = MaterialTheme.colors.onSurface
+                                    )
+                                }
                             }
+                        }
+                    }
+                    if (CAMSApplication.loading) {
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            CircularProgressIndicator()
                         }
                     }
                     Spacer(modifier = Modifier.height(10.dp))
@@ -123,40 +134,30 @@ object Me : Page() {
                     }
                 }
             } else {
-                if (CAMSApplication.session.value != null) {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                val context = LocalContext.current
+                Column {
+                    Row(
                         modifier = Modifier
-                            .fillMaxSize()
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                } else {
-                    val context = LocalContext.current
-                    Column {
-                        Row(
-                            modifier = Modifier
-                                .background(MaterialTheme.colors.surface)
-                                .clickable {
-                                    context.startActivity(Intent(context, SignInActivity::class.java))
-                                }
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center,
-                                modifier = Modifier
-                                    .padding(20.dp)
-                                    .fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = "SIGN IN / UP",
-                                    fontSize = 26.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colors.onBackground
-                                )
+                            .background(MaterialTheme.colors.surface)
+                            .clickable {
+                                context.startActivity(Intent(context, SignInActivity::class.java))
                             }
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                .padding(20.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "SIGN IN / UP",
+                                fontSize = 26.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colors.onBackground
+                            )
                         }
+
                     }
                 }
             }

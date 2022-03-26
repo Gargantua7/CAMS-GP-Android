@@ -12,7 +12,7 @@ data class Person(
     val majorId: String,
     val dep: String,
     val depId: Int,
-    val permission: Int?,
+    val permission: Int,
     val title: String,
     val phone: String?,
     val wechat: String?

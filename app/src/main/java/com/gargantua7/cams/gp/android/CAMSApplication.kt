@@ -18,6 +18,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
+import java.net.UnknownHostException
 
 /**
  * @author Gargantua7
@@ -30,25 +31,29 @@ class CAMSApplication : Application() {
         var username: String? = null
         var session = MutableLiveData<String?>()
         var errorMsg by mutableStateOf<String?>(null)
+        var loading by mutableStateOf(false)
         var user = Transformations.switchMap<String?, Person?>(session) {
             liveData<Person?>(Dispatchers.IO) {
                 if (it == null) emit(null)
                 else {
+                    loading = true
                     val result = PersonRepository.getMyInfo()
                     if (result.isSuccess) {
                         val list = result.getOrThrow()
                         if (list.size == 1) {
-                            emit(result.getOrThrow().single())
+                            emit(list.single())
                         } else {
                             errorMsg = "Not Found"
                         }
                     } else {
                         errorMsg = when (result.exceptionOrNull()) {
                             is AuthorizedException -> "Invalid Session"
+                            is UnknownHostException -> "Network Error"
                             else -> "Unknown Server Exception"
                         }
                         Log.w("Get Me", result.exceptionOrNull())
                     }
+                    loading = false
                     delay(1000)
                     errorMsg = null
                 }
@@ -62,8 +67,10 @@ class CAMSApplication : Application() {
         super.onCreate()
         _context = WeakReference(applicationContext)
         scope.launch {
+            loading = true
             PersonRepository.loadUsername()
             SecretRepository.loadSession()
+            loading = false
         }
     }
 }

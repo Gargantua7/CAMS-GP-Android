@@ -1,5 +1,6 @@
 package com.gargantua7.cams.gp.android.ui.main
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,12 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.logic.model.Repair
+import com.gargantua7.cams.gp.android.ui.repair.RepairActivity
 import com.gargantua7.cams.gp.android.ui.util.stringResource
 import com.gargantua7.cams.gp.android.ui.util.toIntuitive
 
@@ -50,6 +53,7 @@ object Repairs : PageWithList<Repair>() {
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     override fun listItem(repair: Repair) {
+        val context = LocalContext.current
         Card(
             modifier = Modifier
                 .padding(5.dp, 2.5.dp)
@@ -58,7 +62,10 @@ object Repairs : PageWithList<Repair>() {
                     shape = RoundedCornerShape(20.dp)
                 ),
             onClick = {
-                /* TODO */
+                Intent(context, RepairActivity::class.java).let {
+                    it.putExtra("id", repair.id)
+                    context.startActivity(it)
+                }
             }
         ) {
             Column {
@@ -98,7 +105,13 @@ object Repairs : PageWithList<Repair>() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Card(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            Intent(context, RepairActivity::class.java).let {
+                                it.putExtra("id", repair.id)
+                                it.putExtra("reply", true)
+                                context.startActivity(it)
+                            }
+                        },
                         elevation = 0.dp,
                         modifier = Modifier
                             .weight(0.5f)
