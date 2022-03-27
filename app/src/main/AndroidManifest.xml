@@ -15,6 +15,7 @@
         <activity
                 android:name=".ui.repair.RepairActivity"
                 android:exported="true"
+                android:windowSoftInputMode="stateVisible|adjustResize"
                 android:theme="@style/Theme.CAMSGPAndroid.NoActionBar"/>
         <activity
                 android:name=".ui.person.SignInActivity"

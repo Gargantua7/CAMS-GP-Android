@@ -13,13 +13,15 @@ object PersonRepository {
     private val personService = NetworkServiceCreator.create(PersonService::class.java)
 
     suspend fun getMyInfo() = fire {
-        personService.searchPerson(
-            username = CAMSApplication.username
-        ).get().apply {
+        personService.getMe().get().apply {
             if (isSuccess) {
                 saveMe()
             }
         }
+    }
+
+    suspend fun getPersonByUsername(username: String) = fire {
+        personService.getPersonByUsername(username).get()
     }
 
     suspend fun saveUsername() {

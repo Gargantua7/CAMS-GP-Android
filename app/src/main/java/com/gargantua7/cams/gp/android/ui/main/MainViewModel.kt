@@ -14,4 +14,5 @@ class MainViewModel: ViewModel() {
 
     var value by mutableStateOf("")
 
+    var errorMsg by mutableStateOf<String?>(null)
 }

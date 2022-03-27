@@ -11,7 +11,9 @@ object RepairRepository {
 
     private val repairService = NetworkServiceCreator.create<RepairService>()
 
-    suspend fun searchRepair(page: Int, searcher: RepairSearcher) =
+    suspend fun getRepairById(id: Long) = fire { repairService.getRepairById(id).get() }
+
+    suspend fun searchRepair(page: Int, searcher: RepairSearcher) = fire {
         repairService.searchRepair(
             page,
             searcher.id,
@@ -21,5 +23,6 @@ object RepairRepository {
             searcher.state,
             searcher.unassigned
         ).get()
+    }
 
 }

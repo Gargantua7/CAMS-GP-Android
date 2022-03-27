@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.gargantua7.cams.gp.android.CAMSApplication
 import com.gargantua7.cams.gp.android.ui.theme.CAMSGPAndroidTheme
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -68,7 +67,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             }
-                            CAMSApplication.errorMsg?.let {
+                            viewModel.errorMsg?.let {
                                 scope.launch {
                                     scaffoldState.snackbarHostState.showSnackbar(it)
                                 }

@@ -40,10 +40,11 @@ object Me : Page() {
     override fun draw() {
         Log.d("Fragment View CREATE", "Me")
         val user by CAMSApplication.user.observeAsState()
+        val session by CAMSApplication.session.observeAsState()
         val vm = viewModel(MeViewModel::class.java)
         dialog()
         Column {
-            if (user != null || CAMSApplication.session.value != null) {
+            if (user != null || session != null) {
                 user?.let {
                     Column {
                         Row(
@@ -173,6 +174,7 @@ object Me : Page() {
     fun dialog() {
         val vm = viewModel(MeViewModel::class.java)
         val scope = rememberCoroutineScope()
+        val mainVM = viewModel(MainViewModel::class.java)
         if (vm.logoutDialog) {
             AlertDialog(
                 onDismissRequest = { vm.logoutDialog = false },
@@ -187,9 +189,9 @@ object Me : Page() {
                         scope.launch {
                             SecretRepository.removeSession()
                             PersonRepository.removeUsername()
-                            CAMSApplication.errorMsg = "Logout Success"
+                            mainVM.errorMsg = "Logout Success"
                             delay(1000)
-                            CAMSApplication.errorMsg = null
+                            mainVM.errorMsg = null
                         }
                         vm.logoutDialog = false
                     }) {

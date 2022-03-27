@@ -4,14 +4,14 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import com.gargantua7.cams.gp.android.CAMSApplication
+import androidx.lifecycle.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.gargantua7.cams.gp.android.logic.exception.AuthorizedException
+import com.gargantua7.cams.gp.android.logic.exception.NotFoundException
 import com.gargantua7.cams.gp.android.logic.model.Repair
-import com.gargantua7.cams.gp.android.logic.model.RepairSearcher
+import com.gargantua7.cams.gp.android.logic.paging.ReplyPagingSource
 import com.gargantua7.cams.gp.android.logic.repository.RepairRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -30,6 +30,8 @@ class RepairViewModel : ViewModel() {
 
     var networkError by mutableStateOf(false)
 
+    var editor by mutableStateOf("")
+
     val repair = Transformations.switchMap(id) {
         liveData(Dispatchers.IO) {
             if (it == null) emit(null)
@@ -37,23 +39,26 @@ class RepairViewModel : ViewModel() {
         }
     }
 
+    val replies = Transformations.switchMap(id) {
+        liveData(Dispatchers.IO) {
+            if (it == null) emit(null)
+            else emit(
+                Pager(PagingConfig(pageSize = 10)) {
+                    ReplyPagingSource(it)
+                }.flow.cachedIn(viewModelScope)
+            )
+        }
+    }
+
     suspend fun getRepair(id: Long): Repair? {
         loading = true
-        val result = RepairRepository.searchRepair(
-            0,
-            RepairSearcher(id = id)
-        )
+        val result = RepairRepository.getRepairById(id)
         if (result.isSuccess) {
-            val list = result.getOrThrow()
-            if (list.size == 1) {
-                return list.single()
-            } else {
-                Log.w("Get Repair($id) has Not Single", list.size.toString())
-                errorMsg = "Not Found"
-            }
+            return result.getOrThrow()
         } else {
-            CAMSApplication.errorMsg = when (result.exceptionOrNull()) {
+            errorMsg = when (result.exceptionOrNull()) {
                 is AuthorizedException -> "Invalid Session"
+                is NotFoundException -> "Not Found"
                 is UnknownHostException -> {
                     networkError = true
                     "Network Error"

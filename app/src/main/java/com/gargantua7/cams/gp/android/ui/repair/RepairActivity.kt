@@ -29,13 +29,15 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import com.gargantua7.cams.gp.android.CAMSApplication
 import com.gargantua7.cams.gp.android.R
-import com.gargantua7.cams.gp.android.logic.model.Person
-import com.gargantua7.cams.gp.android.logic.model.Repair
+import com.gargantua7.cams.gp.android.logic.model.*
 import com.gargantua7.cams.gp.android.ui.theme.CAMSGPAndroidTheme
 import com.gargantua7.cams.gp.android.ui.util.toIntuitive
 import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
@@ -47,6 +49,7 @@ class RepairActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         window.setFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
@@ -61,7 +64,7 @@ class RepairActivity : AppCompatActivity() {
     private fun draw() {
         setContent {
             CAMSGPAndroidTheme {
-                ProvideWindowInsets(consumeWindowInsets = false) {
+                ProvideWindowInsets(consumeWindowInsets = false, windowInsetsAnimationsEnabled = true) {
                     val vm = viewModel(RepairViewModel::class.java)
                     val repair by vm.repair.observeAsState()
                     rememberSystemUiController().setStatusBarColor(
@@ -72,9 +75,12 @@ class RepairActivity : AppCompatActivity() {
                         val scaffoldState = rememberScaffoldState()
                         val scope = rememberCoroutineScope()
                         val focus = LocalFocusManager.current
+                        val rs by vm.replies.observeAsState()
+                        val replies = rs?.collectAsLazyPagingItems()
                         Scaffold(
                             scaffoldState = scaffoldState,
-                            topBar = { topBar() }
+                            topBar = { topBar() },
+                            bottomBar = { editor() }
                         ) {
                             vm.errorMsg?.let {
                                 scope.launch {
@@ -88,6 +94,29 @@ class RepairActivity : AppCompatActivity() {
                                     item {
                                         repairItem(repair = it)
                                     }
+                                    item { Spacer(modifier = Modifier.height(10.dp)) }
+                                    replies?.let {
+                                        items(it) { reply ->
+                                            reply?.let { r -> replyItem(r) }
+                                        }
+                                        if (it.itemCount == 0) {
+                                            item {
+                                                Text(
+                                                    text = "No Reply Yet",
+                                                    textAlign = TextAlign.Center,
+                                                    color = MaterialTheme.colors.secondary,
+                                                    modifier = Modifier.fillMaxWidth()
+                                                )
+                                            }
+                                        }
+                                    } ?: item {
+                                        Text(
+                                            text = "No Reply Yet",
+                                            textAlign = TextAlign.Center,
+                                            color = MaterialTheme.colors.secondary,
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                    }
                                 }
                             } ?: run {
 
@@ -95,6 +124,37 @@ class RepairActivity : AppCompatActivity() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @Composable
+    fun editor() {
+        Row(
+            verticalAlignment = Alignment.Bottom,
+            modifier = Modifier
+                .navigationBarsWithImePadding()
+                .background(MaterialTheme.colors.surface)
+        ) {
+            TextField(
+                value = viewModel.editor,
+                onValueChange = { viewModel.editor = it },
+                maxLines = 5,
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent
+                ),
+                modifier = Modifier.weight(1f)
+            )
+            IconButton(
+                onClick = { /*TODO*/ },
+                enabled = viewModel.editor.isNotBlank()
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Send,
+                    contentDescription = "Send",
+                    tint = if (viewModel.editor.isNotBlank()) MaterialTheme.colors.primary
+                    else MaterialTheme.colors.secondary
+                )
             }
         }
     }
@@ -110,7 +170,6 @@ class RepairActivity : AppCompatActivity() {
                 modifier = Modifier
                     .padding(15.dp, 5.dp)
             ) {
-
                 Text(
                     text = repair.title,
                     fontSize = 24.sp,
@@ -128,8 +187,7 @@ class RepairActivity : AppCompatActivity() {
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = repair.updateTime.toIntuitive(),
-                        fontSize = 10.sp,
-                        color = MaterialTheme.colors.onBackground
+                        fontSize = 10.sp
                     )
                 }
             }
@@ -204,6 +262,80 @@ class RepairActivity : AppCompatActivity() {
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
+        }
+    }
+
+    @Composable
+    fun replyItem(reply: Reply) {
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colors.surface)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(15.dp, 15.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    personInfo(person = reply.sender, nameSize = 16)
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = reply.time.toIntuitive(),
+                        fontSize = 10.sp,
+                        color = MaterialTheme.colors.secondary
+                    )
+                }
+                Spacer(modifier = Modifier.height(5.dp))
+                if (reply is NormalReply) {
+                    when (reply.type) {
+                        0 -> normalItem(text = reply.content)
+                        1 -> stateItem(state = reply.content)
+                    }
+                } else if (reply is PersonReply) {
+                    assignItem(principal = reply.content)
+                }
+            }
+            Divider()
+
+        }
+    }
+
+    @Composable
+    fun normalItem(text: String) {
+        Text(text = text)
+    }
+
+    @Composable
+    fun stateItem(state: String) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "ChangeState to ->")
+            Spacer(modifier = Modifier.width(5.dp))
+            Icon(
+                Icons.Filled.Lens,
+                "Lens",
+                tint = if (state == "Open") Color.Green else Color.Red,
+                modifier = Modifier.size(11.dp)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = if (state == "Open") "OPEN" else "CLOSE",
+                fontSize = 12.sp,
+                color = MaterialTheme.colors.onBackground
+            )
+        }
+    }
+
+    @Composable
+    fun assignItem(principal: Person) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "Assigned Principal to", fontSize = 12.sp)
+            Spacer(modifier = Modifier.width(5.dp))
+            personInfo(person = principal)
         }
     }
 

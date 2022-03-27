@@ -13,6 +13,15 @@ import retrofit2.http.Query
  */
 interface PersonService {
 
+    @GET("person/info/get/me")
+    suspend fun getMe(@Header("session") session: String? = CAMSApplication.session.value): NetworkResponse<Person>
+
+    @GET("person/info/get/{username}")
+    suspend fun getPersonByUsername(
+        @Path("username") username: String,
+        @Header("session") session: String? = CAMSApplication.session.value
+    ): NetworkResponse<Person>
+
     @GET("person/info/search/{page}")
     suspend fun searchPerson(
         @Path("page") page: Int = 0,
