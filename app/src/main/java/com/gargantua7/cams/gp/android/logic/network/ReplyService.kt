@@ -2,10 +2,10 @@ package com.gargantua7.cams.gp.android.logic.network
 
 import com.gargantua7.cams.gp.android.CAMSApplication
 import com.gargantua7.cams.gp.android.logic.model.NetworkResponse
+import com.gargantua7.cams.gp.android.logic.model.NoResultResponse
 import com.gargantua7.cams.gp.android.logic.model.NormalReply
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Path
+import com.gargantua7.cams.gp.android.logic.model.SendReply
+import retrofit2.http.*
 
 /**
  * @author Gargantua7
@@ -18,5 +18,12 @@ interface ReplyService {
         @Path("page") page: Int,
         @Header("session") session: String? = CAMSApplication.session.value
     ): NetworkResponse<List<NormalReply>>
+
+    @POST("repair/{repairId}/reply/add")
+    suspend fun sendReplyForRepair(
+        @Path("repairId") repair: Long,
+        @Body reply: SendReply,
+        @Header("session") session: String? = CAMSApplication.session.value
+    ): NoResultResponse
 
 }

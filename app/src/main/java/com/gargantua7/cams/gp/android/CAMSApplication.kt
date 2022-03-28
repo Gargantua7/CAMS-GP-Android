@@ -53,6 +53,8 @@ class CAMSApplication : Application() {
                     if (result.exceptionOrNull() is AuthorizedException) {
                         session.value = null
                         username = null
+                        PersonRepository.removeUsername()
+                        SecretRepository.removeSession()
                         emit(null)
                     }
                     loading = false

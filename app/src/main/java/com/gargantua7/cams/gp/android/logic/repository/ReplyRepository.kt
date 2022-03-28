@@ -1,5 +1,6 @@
 package com.gargantua7.cams.gp.android.logic.repository
 
+import com.gargantua7.cams.gp.android.logic.model.SendReply
 import com.gargantua7.cams.gp.android.logic.network.NetworkServiceCreator
 import com.gargantua7.cams.gp.android.logic.network.ReplyService
 
@@ -12,6 +13,10 @@ object ReplyRepository {
 
     suspend fun getReplyListByRepair(repairId: Long, page: Int) = fire {
         replyService.getReplyListByRepair(repairId, page).get()
+    }
+
+    suspend fun sendReplyForRepair(repairId: Long, content: String) = fire {
+        replyService.sendReplyForRepair(repairId, SendReply(content)).get()
     }
 
 }

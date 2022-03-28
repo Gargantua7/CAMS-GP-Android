@@ -2,11 +2,9 @@ package com.gargantua7.cams.gp.android.logic.network
 
 import com.gargantua7.cams.gp.android.CAMSApplication
 import com.gargantua7.cams.gp.android.logic.model.NetworkResponse
+import com.gargantua7.cams.gp.android.logic.model.NoResultResponse
 import com.gargantua7.cams.gp.android.logic.model.Repair
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 /**
  * @author Gargantua7
@@ -30,5 +28,12 @@ interface RepairService {
         @Query(value = "unassigned") unassigned: Boolean = false,
         @Header("session") session: String? = CAMSApplication.session.value
     ): NetworkResponse<List<Repair>>
+
+    @POST("repair/{id}/state/change/{state}")
+    suspend fun changeState(
+        @Path("id") id: Long,
+        @Path("state") state: String,
+        @Header("session") session: String? = CAMSApplication.session.value
+    ): NoResultResponse
 
 }

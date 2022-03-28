@@ -25,4 +25,11 @@ object RepairRepository {
         ).get()
     }
 
+    const val STATE_OPEN = "open"
+    const val STATE_CLOSE = "close"
+
+    suspend fun changeState(id: Long, state: String) = fire {
+        repairService.changeState(id, state).get()
+    }
+
 }

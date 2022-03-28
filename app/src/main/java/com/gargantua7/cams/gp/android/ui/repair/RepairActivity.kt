@@ -49,7 +49,6 @@ class RepairActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         window.setFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
@@ -77,19 +76,26 @@ class RepairActivity : AppCompatActivity() {
                         val focus = LocalFocusManager.current
                         val rs by vm.replies.observeAsState()
                         val replies = rs?.collectAsLazyPagingItems()
+                        if (vm.fresh) {
+                            replies?.refresh()
+                            vm.fresh = false
+                        }
                         Scaffold(
                             scaffoldState = scaffoldState,
                             topBar = { topBar() },
                             bottomBar = { editor() }
-                        ) {
+                        ) { padding ->
                             vm.errorMsg?.let {
                                 scope.launch {
                                     scaffoldState.snackbarHostState.showSnackbar(it)
                                 }
+                                vm.errorMsg = null
                             }
                             repair?.let {
                                 LazyColumn(
-                                    modifier = Modifier.fillMaxSize()
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(padding)
                                 ) {
                                     item {
                                         repairItem(repair = it)
@@ -146,7 +152,7 @@ class RepairActivity : AppCompatActivity() {
                 modifier = Modifier.weight(1f)
             )
             IconButton(
-                onClick = { /*TODO*/ },
+                onClick = { viewModel.sendRepair() },
                 enabled = viewModel.editor.isNotBlank()
             ) {
                 Icon(
@@ -186,7 +192,7 @@ class RepairActivity : AppCompatActivity() {
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = repair.updateTime.toIntuitive(),
+                        text = repair.initTime.toIntuitive(),
                         fontSize = 10.sp
                     )
                 }
@@ -241,12 +247,13 @@ class RepairActivity : AppCompatActivity() {
                                     interactionSource = MutableInteractionSource(),
                                     indication = null
                                 ) {
-
+                                    viewModel.stateChangeDialog = true
                                 }
                             } else this
                         } ?: this
                     }
                 ) {
+                    dialog()
                     Text(
                         text = if (repair.state) "OPEN" else "CLOSE",
                         fontSize = 12.sp,
@@ -262,6 +269,24 @@ class RepairActivity : AppCompatActivity() {
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
+        }
+    }
+
+    @Composable
+    fun dialog() {
+        if (viewModel.stateChangeDialog) {
+            AlertDialog(
+                onDismissRequest = { viewModel.stateChangeDialog = false },
+                title = { Text(text = "Change State to ${if (viewModel.repair.value?.state == true) "CLOSE" else "OPEN"}") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        viewModel.changeState()
+                        viewModel.stateChangeDialog = false
+                    }) {
+                        Text(text = "Sure")
+                    }
+                },
+            )
         }
     }
 
@@ -311,7 +336,7 @@ class RepairActivity : AppCompatActivity() {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "ChangeState to ->")
+            Text(text = "ChangeState to ", fontSize = 12.sp)
             Spacer(modifier = Modifier.width(5.dp))
             Icon(
                 Icons.Filled.Lens,
