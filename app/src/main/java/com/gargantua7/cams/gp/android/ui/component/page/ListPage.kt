@@ -1,5 +1,6 @@
-package com.gargantua7.cams.gp.android.ui.main
+package com.gargantua7.cams.gp.android.ui.component.page
 
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -29,16 +30,15 @@ import kotlinx.coroutines.flow.Flow
 /**
  * @author Gargantua7
  */
-sealed class PageWithList<E : Any> : Page() {
+abstract class ListPage<E : Any> : Page {
 
-    lateinit var items: LazyPagingItems<E>
+    abstract val title: String
+
+    private lateinit var items: LazyPagingItems<E>
 
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
-    fun swipe(
-        flow: Flow<PagingData<E>>,
-        filler: @Composable () -> Unit = { Spacer(modifier = Modifier.height(2.5.dp)) },
-    ) {
+    fun swipe(flow: Flow<PagingData<E>>) {
         items = flow.collectAsLazyPagingItems()
         val isRefresh = rememberSwipeRefreshState(false)
 
@@ -54,16 +54,16 @@ sealed class PageWithList<E : Any> : Page() {
             modifier = Modifier.fillMaxSize()
         ) {
             isRefresh.isRefreshing = items.loadState.refresh is LoadState.Loading && items.itemCount > 0
-            Log.d("$title Paging Refresh UI State", items.loadState.append.toString())
+            Log.d("$id Paging Refresh UI State", items.loadState.append.toString())
             when (items.loadState.refresh) {
-                is LoadState.NotLoading -> list(items, filler)
+                is LoadState.NotLoading -> list(items)
                 is LoadState.Loading -> {
-                    if (items.itemCount > 0) list(items, filler)
+                    if (items.itemCount > 0) list(items)
                     else loadingPage()
                 }
                 is LoadState.Error -> {
                     if (items.itemCount > 0) {
-                        list(items, filler)
+                        list(items)
                         Toast.makeText(LocalContext.current, stringResource(R.string.network_error), Toast.LENGTH_SHORT)
                             .show()
                     } else errorPage { items.refresh() }
@@ -73,29 +73,28 @@ sealed class PageWithList<E : Any> : Page() {
     }
 
     @Composable
-    fun list(
-        items: LazyPagingItems<E>,
-        filler: @Composable () -> Unit = { Spacer(modifier = Modifier.height(2.5.dp)) },
-    ) {
+    fun list(items: LazyPagingItems<E>) {
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            item { filler() }
+            item { Spacer(modifier = Modifier.height(2.5.dp)) }
             items(items) { item ->
                 item?.let { listItem(it) }
             }
-            Log.d("$title Paging Append UI State", items.loadState.append.toString())
+            Log.d("$id Paging Append UI State", items.loadState.append.toString())
             when (items.loadState.append) {
                 is LoadState.Loading -> item { loadingItem() }
                 is LoadState.Error -> item { errorItem { items.retry() } }
                 else -> Unit
             }
-            item { filler() }
+            item { Spacer(modifier = Modifier.height(2.5.dp)) }
         }
     }
 
     @Composable
     abstract fun listItem(item: E)
+
+    abstract fun itemOnClick(item: E, context: Context)
 
     @Composable
     fun loadingPage() {
@@ -159,5 +158,3 @@ sealed class PageWithList<E : Any> : Page() {
     }
 
 }
-
-val itemsWithList = listOf(Repairs, Events)

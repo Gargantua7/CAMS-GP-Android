@@ -24,6 +24,7 @@ import com.gargantua7.cams.gp.android.CAMSApplication
 import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.logic.repository.PersonRepository
 import com.gargantua7.cams.gp.android.logic.repository.SecretRepository
+import com.gargantua7.cams.gp.android.ui.component.page.NavPage
 import com.gargantua7.cams.gp.android.ui.person.SignInActivity
 import com.gargantua7.cams.gp.android.ui.util.stringResource
 import kotlinx.coroutines.delay
@@ -32,7 +33,9 @@ import kotlinx.coroutines.launch
 /**
  * @author Gargantua7
  */
-object Me : Page() {
+object Me : NavPage {
+
+    override val id: String = "Me"
     override val title = stringResource(R.string.me)
     override val icon = Icons.Filled.Person
 

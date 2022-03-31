@@ -9,12 +9,15 @@ import androidx.compose.material.icons.filled.Message
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.gargantua7.cams.gp.android.R
+import com.gargantua7.cams.gp.android.ui.component.page.NavPage
 import com.gargantua7.cams.gp.android.ui.util.stringResource
 
 /**
  * @author Gargantua7
  */
-object Messages: Page() {
+object Messages : NavPage {
+
+    override val id: String = "Message"
     override val title = stringResource(R.string.message)
     override val icon = Icons.Filled.Message
 
