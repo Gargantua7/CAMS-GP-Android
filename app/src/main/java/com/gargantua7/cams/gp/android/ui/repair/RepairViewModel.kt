@@ -62,6 +62,7 @@ class RepairViewModel : ComposeViewModel() {
         loading = true
         val result = RepairRepository.getRepairById(id)
         if (result.isSuccess) {
+            loading = false
             return result.getOrThrow()
         } else {
             errorMsg = when (result.exceptionOrNull()) {
@@ -111,8 +112,7 @@ class RepairViewModel : ComposeViewModel() {
     fun changeState() {
         viewModelScope.launch {
             val state = if (repair.value?.state == true) RepairRepository.STATE_CLOSE else RepairRepository.STATE_OPEN
-            val res = id.value?.let { RepairRepository.changeState(it, state) }
-            res?.let {
+            id.value?.let { RepairRepository.changeState(it, state) }?.let {
                 errorMsg = if (it.isSuccess) {
                     editor = ""
                     id.value = id.value
@@ -120,7 +120,28 @@ class RepairViewModel : ComposeViewModel() {
                 } else {
                     val e = it.exceptionOrNull()
                     when (e) {
-                        is AuthorizedException -> "Login Expired"
+                        is AuthorizedException -> "Insufficient Permissions"
+                        else -> "Unknown Exception"
+                    }
+                }
+            }
+        }
+    }
+
+    fun assignPrinciple(principle: String) {
+        if (principle == repair.value?.principal?.username) {
+            errorMsg = "Not Action Require"
+            return
+        }
+        viewModelScope.launch {
+            id.value?.let { RepairRepository.assignPrinciple(it, principle) }?.let {
+                errorMsg = if (it.isSuccess) {
+                    id.value = id.value
+                    "Assign Principle Success"
+                } else {
+                    val e = it.exceptionOrNull()
+                    when (e) {
+                        is AuthorizedException -> "Insufficient Permissions"
                         else -> "Unknown Exception"
                     }
                 }

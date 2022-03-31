@@ -1,10 +1,15 @@
 package com.gargantua7.cams.gp.android.ui.search
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
@@ -39,6 +44,26 @@ class SearchActivity : ComposeActivity(), BackTopBar, SearchTopBar {
     override fun contentComponents(scaffoldState: ScaffoldState, scope: CoroutineScope) {
         Column(Modifier.fillMaxSize()) {
             PersonSearch(personSearchViewModel).draw()
+        }
+        dialog()
+    }
+
+    @Composable
+    fun dialog() {
+        viewModel.picked?.let { (id, name) ->
+            AlertDialog(
+                onDismissRequest = { viewModel.picked = null },
+                title = { Text(text = "Sure reassign to $name?") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        viewModel.picked = null
+                        setResult(Activity.RESULT_OK, Intent().putExtra("res", id))
+                        finish()
+                    }) {
+                        Text(text = "Sure")
+                    }
+                },
+            )
         }
     }
 

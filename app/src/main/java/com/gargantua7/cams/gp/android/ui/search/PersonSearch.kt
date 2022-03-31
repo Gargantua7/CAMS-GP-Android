@@ -13,10 +13,12 @@ import com.gargantua7.cams.gp.android.ui.component.page.PersonsPage
 class PersonSearch(val viewModel: PersonSearchViewModel) : PersonsPage(), SearchComponent<Person> {
 
     override val id: String = "PersonSearch"
-    override val title = "Person"
+    override val title = "PersonSearch"
 
     override fun itemOnClick(item: Person, context: Context) {
-
+        if (context is SearchActivity) {
+            context.viewModel.picked = item.username to item.name
+        }
     }
 
     @Composable

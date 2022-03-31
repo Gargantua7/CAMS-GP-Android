@@ -16,4 +16,6 @@ class SearchViewModel : ComposeViewModel(), SearchTopBar.SearchTopBarViewModel {
     var picker = false
 
     override var value by mutableStateOf("")
+
+    var picked by mutableStateOf<Pair<String, String>?>(null)
 }

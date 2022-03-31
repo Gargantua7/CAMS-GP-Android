@@ -36,4 +36,11 @@ interface RepairService {
         @Header("session") session: String? = CAMSApplication.session.value
     ): NoResultResponse
 
+    @POST("repair/{id}/assign/{principle}")
+    suspend fun assignPrinciple(
+        @Path("id") id: Long,
+        @Path("principle") principle: String,
+        @Header("session") session: String? = CAMSApplication.session.value
+    ): NoResultResponse
+
 }

@@ -1,8 +1,11 @@
 package com.gargantua7.cams.gp.android.ui.repair
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -44,12 +47,21 @@ class RepairActivity : ComposeActivity(), BackTopBar, BottomBar {
 
     override val viewModel by lazy { ViewModelProvider(this).get(RepairViewModel::class.java) }
 
+    private lateinit var startWithRes: ActivityResultLauncher<Intent>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val id = intent.getLongExtra("id", -1L)
         if (id == -1L) finish()
         Log.d("RepairActivity onCreate", "id = $id")
         viewModel.id.value = id
+        startWithRes = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.getStringExtra("res")?.let { res ->
+                    viewModel.assignPrinciple(res)
+                }
+            }
+        }
     }
 
     @Composable
@@ -131,8 +143,6 @@ class RepairActivity : ComposeActivity(), BackTopBar, BottomBar {
 
     @Composable
     fun repairItem(repair: Repair) {
-        val user by CAMSApplication.user.observeAsState()
-        val context = LocalContext.current
         Column(
             modifier = Modifier
                 .background(MaterialTheme.colors.surface)
@@ -173,73 +183,86 @@ class RepairActivity : ComposeActivity(), BackTopBar, BottomBar {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(15.dp, 0.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.run {
-                        user?.let { u ->
-                            if (u.permission > 1 && u.depId == 1) {
-                                this.clickable(
-                                    interactionSource = MutableInteractionSource(),
-                                    indication = null
-                                ) {
-                                    context.run {
-                                        Intent(this, SearchActivity::class.java).let {
-                                            it.putExtra("person", true)
-                                            it.putExtra("ps", PersonSearcher(depId = 1))
-                                            startActivity(it)
-                                        }
-                                    }
-                                }
-                            } else this
-                        } ?: this
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.PendingActions,
-                        contentDescription = "principal",
-                        modifier = Modifier.size(12.dp)
-                    )
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Text(text = "Principal:", fontSize = 12.sp)
-                    Spacer(modifier = Modifier.width(5.dp))
-                    repair.principal?.let { p -> personInfo(person = p) }
-                    if (repair.principal == null) Text(text = "Unassigned", fontSize = 12.sp)
-                }
+                principal(repair)
                 Spacer(modifier = Modifier.weight(1f))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.run {
-                        user?.let { u ->
-                            if ((u.permission > 1 && u.depId == 1) ||
-                                u.username == repair.initiator.username ||
-                                u.username == repair.principal?.username
-                            ) {
-                                this.clickable(
-                                    interactionSource = MutableInteractionSource(),
-                                    indication = null
-                                ) {
-                                    viewModel.stateChangeDialog = true
-                                }
-                            } else this
-                        } ?: this
-                    }
-                ) {
-                    dialog()
-                    Text(
-                        text = if (repair.state) "OPEN" else "CLOSE",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onBackground
-                    )
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Icon(
-                        Icons.Filled.Lens,
-                        "Lens",
-                        tint = if (repair.state) Color.Green else Color.Red,
-                        modifier = Modifier.size(11.dp)
-                    )
-                }
+                state(repair)
             }
             Spacer(modifier = Modifier.height(10.dp))
+        }
+    }
+
+    @Composable
+    fun principal(repair: Repair) {
+        val user by CAMSApplication.user.observeAsState()
+        val context = LocalContext.current
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.run {
+                user?.let { u ->
+                    if (u.permission > 1 && u.depId == 1) {
+                        this.clickable(
+                            interactionSource = MutableInteractionSource(),
+                            indication = null
+                        ) {
+                            context.run {
+                                Intent(this, SearchActivity::class.java).let {
+                                    it.putExtra("person", true)
+                                    it.putExtra("ps", PersonSearcher(depId = 1))
+                                    startWithRes.launch(it)
+                                }
+                            }
+                        }
+                    } else this
+                } ?: this
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Filled.PendingActions,
+                contentDescription = "principal",
+                modifier = Modifier.size(12.dp)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(text = "Principal:", fontSize = 12.sp)
+            Spacer(modifier = Modifier.width(5.dp))
+            repair.principal?.let { p -> personInfo(person = p) }
+            if (repair.principal == null) Text(text = "Unassigned", fontSize = 12.sp)
+        }
+    }
+
+    @Composable
+    fun state(repair: Repair) {
+        val user by CAMSApplication.user.observeAsState()
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.run {
+                user?.let { u ->
+                    if ((u.permission > 1 && u.depId == 1) ||
+                        u.username == repair.initiator.username ||
+                        u.username == repair.principal?.username
+                    ) {
+                        this.clickable(
+                            interactionSource = MutableInteractionSource(),
+                            indication = null
+                        ) {
+                            viewModel.stateChangeDialog = true
+                        }
+                    } else this
+                } ?: this
+            }
+        ) {
+            dialog()
+            Text(
+                text = if (repair.state) "OPEN" else "CLOSE",
+                fontSize = 12.sp,
+                color = MaterialTheme.colors.onBackground
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Icon(
+                Icons.Filled.Lens,
+                "Lens",
+                tint = if (repair.state) Color.Green else Color.Red,
+                modifier = Modifier.size(11.dp)
+            )
         }
     }
 

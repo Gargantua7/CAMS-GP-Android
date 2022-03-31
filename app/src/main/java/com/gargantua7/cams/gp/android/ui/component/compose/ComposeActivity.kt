@@ -65,6 +65,10 @@ abstract class ComposeActivity : AppCompatActivity() {
                             },
                             floatingActionButtonPosition = FabPosition.End
                         ) {
+
+                            Box(modifier = Modifier.padding(it)) {
+                                contentComponents(scaffoldState, scope)
+                            }
                             if (viewModel.loading) {
                                 Column(
                                     verticalArrangement = Arrangement.Center,
@@ -74,9 +78,6 @@ abstract class ComposeActivity : AppCompatActivity() {
                                 ) {
                                     CircularProgressIndicator()
                                 }
-                            }
-                            Box(modifier = Modifier.padding(it)) {
-                                contentComponents(scaffoldState, scope)
                             }
                         }
                         viewModel.errorMsg?.let {

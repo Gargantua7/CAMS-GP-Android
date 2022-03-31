@@ -32,4 +32,8 @@ object RepairRepository {
         repairService.changeState(id, state).get()
     }
 
+    suspend fun assignPrinciple(id: Long, principle: String) = fire {
+        repairService.assignPrinciple(id, principle).get()
+    }
+
 }
