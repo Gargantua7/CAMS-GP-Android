@@ -1,10 +1,8 @@
 package com.gargantua7.cams.gp.android.ui.repair
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.WindowManager
-import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -20,13 +18,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -34,108 +31,75 @@ import androidx.paging.compose.items
 import com.gargantua7.cams.gp.android.CAMSApplication
 import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.logic.model.*
-import com.gargantua7.cams.gp.android.ui.theme.CAMSGPAndroidTheme
+import com.gargantua7.cams.gp.android.ui.component.bottombar.BottomBar
+import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
+import com.gargantua7.cams.gp.android.ui.component.topbar.BackTopBar
+import com.gargantua7.cams.gp.android.ui.search.SearchActivity
 import com.gargantua7.cams.gp.android.ui.util.toIntuitive
-import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
-import com.google.accompanist.insets.statusBarsHeight
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class RepairActivity : AppCompatActivity() {
+class RepairActivity : ComposeActivity(), BackTopBar, BottomBar {
 
-    val viewModel by lazy { ViewModelProvider(this).get(RepairViewModel::class.java) }
+    override val viewModel by lazy { ViewModelProvider(this).get(RepairViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-        )
         val id = intent.getLongExtra("id", -1L)
         if (id == -1L) finish()
         Log.d("RepairActivity onCreate", "id = $id")
         viewModel.id.value = id
-        draw()
     }
 
-    private fun draw() {
-        setContent {
-            CAMSGPAndroidTheme {
-                ProvideWindowInsets(consumeWindowInsets = false, windowInsetsAnimationsEnabled = true) {
-                    val vm = viewModel(RepairViewModel::class.java)
-                    val repair by vm.repair.observeAsState()
-                    rememberSystemUiController().setStatusBarColor(
-                        Color.Transparent,
-                        darkIcons = MaterialTheme.colors.isLight
-                    )
-                    Surface(color = MaterialTheme.colors.background) {
-                        val scaffoldState = rememberScaffoldState()
-                        val scope = rememberCoroutineScope()
-                        val focus = LocalFocusManager.current
-                        val rs by vm.replies.observeAsState()
-                        val replies = rs?.collectAsLazyPagingItems()
-                        if (vm.fresh) {
-                            replies?.refresh()
-                            vm.fresh = false
-                        }
-                        Scaffold(
-                            scaffoldState = scaffoldState,
-                            topBar = { topBar() },
-                            bottomBar = { editor() }
-                        ) { padding ->
-                            vm.errorMsg?.let {
-                                scope.launch {
-                                    scaffoldState.snackbarHostState.showSnackbar(it)
-                                }
-                                vm.errorMsg = null
-                            }
-                            repair?.let {
-                                LazyColumn(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(padding)
-                                ) {
-                                    item {
-                                        repairItem(repair = it)
-                                    }
-                                    item { Spacer(modifier = Modifier.height(10.dp)) }
-                                    replies?.let {
-                                        items(it) { reply ->
-                                            reply?.let { r -> replyItem(r) }
-                                        }
-                                        if (it.itemCount == 0) {
-                                            item {
-                                                Text(
-                                                    text = "No Reply Yet",
-                                                    textAlign = TextAlign.Center,
-                                                    color = MaterialTheme.colors.secondary,
-                                                    modifier = Modifier.fillMaxWidth()
-                                                )
-                                            }
-                                        }
-                                    } ?: item {
-                                        Text(
-                                            text = "No Reply Yet",
-                                            textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colors.secondary,
-                                            modifier = Modifier.fillMaxWidth()
-                                        )
-                                    }
-                                }
-                            } ?: run {
-
-                            }
+    @Composable
+    override fun contentComponents(scaffoldState: ScaffoldState, scope: CoroutineScope) {
+        val repair by viewModel.repair.observeAsState()
+        val rs by viewModel.replies.observeAsState()
+        val replies = rs?.collectAsLazyPagingItems()
+        if (viewModel.fresh) {
+            replies?.refresh()
+            viewModel.fresh = false
+        }
+        repair?.let {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                item {
+                    repairItem(repair = it)
+                }
+                item { Spacer(modifier = Modifier.height(10.dp)) }
+                replies?.let {
+                    items(it) { reply ->
+                        reply?.let { r -> replyItem(r) }
+                    }
+                    if (it.itemCount == 0) {
+                        item {
+                            Text(
+                                text = "No Reply Yet",
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colors.secondary,
+                                modifier = Modifier.fillMaxWidth()
+                            )
                         }
                     }
+                } ?: item {
+                    Text(
+                        text = "No Reply Yet",
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colors.secondary,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
+        } ?: run {
+
         }
     }
 
     @Composable
-    fun editor() {
+    override fun bottomBar() {
         Row(
             verticalAlignment = Alignment.Bottom,
             modifier = Modifier
@@ -168,6 +132,7 @@ class RepairActivity : AppCompatActivity() {
     @Composable
     fun repairItem(repair: Repair) {
         val user by CAMSApplication.user.observeAsState()
+        val context = LocalContext.current
         Column(
             modifier = Modifier
                 .background(MaterialTheme.colors.surface)
@@ -217,7 +182,13 @@ class RepairActivity : AppCompatActivity() {
                                     interactionSource = MutableInteractionSource(),
                                     indication = null
                                 ) {
-
+                                    context.run {
+                                        Intent(this, SearchActivity::class.java).let {
+                                            it.putExtra("person", true)
+                                            it.putExtra("ps", PersonSearcher(depId = 1))
+                                            startActivity(it)
+                                        }
+                                    }
                                 }
                             } else this
                         } ?: this
@@ -336,7 +307,7 @@ class RepairActivity : AppCompatActivity() {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "ChangeState to ", fontSize = 12.sp)
+            Text(text = "Change State to ", fontSize = 12.sp)
             Spacer(modifier = Modifier.width(5.dp))
             Icon(
                 Icons.Filled.Lens,
@@ -411,39 +382,14 @@ class RepairActivity : AppCompatActivity() {
     }
 
     @Composable
-    fun topBar() {
-        Column(
-            modifier = Modifier.background(MaterialTheme.colors.primary)
-        ) {
-            Spacer(
-                modifier = Modifier
-                    .statusBarsHeight()
-                    .fillMaxWidth()
-            )
-            Column(
-                modifier = Modifier
-                    .height(55.dp)
-                    .padding(10.dp)
-            ) {
-                Row {
-                    IconButton(onClick = { finish() }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(
-                        text = "Repair",
-                        fontSize = 24.sp,
-                        textAlign = TextAlign.Center,
-                        maxLines = 1,
-                        color = Color.White
-                    )
-                }
-            }
-        }
+    override fun RowScope.coreComponents() {
+        Text(
+            text = "Repair",
+            fontSize = 24.sp,
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            color = Color.White
+        )
     }
 
     @Composable

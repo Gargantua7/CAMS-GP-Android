@@ -1,83 +1,41 @@
 package com.gargantua7.cams.gp.android.ui.main
 
-import android.os.Bundle
-import android.view.WindowManager
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.core.view.WindowCompat
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.gargantua7.cams.gp.android.ui.theme.CAMSGPAndroidTheme
-import com.google.accompanist.insets.ProvideWindowInsets
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.launch
+import androidx.navigation.NavHostController
+import com.gargantua7.cams.gp.android.ui.component.bottombar.NavBottomBar
+import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
+import com.gargantua7.cams.gp.android.ui.component.topbar.SearchTopBar
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComposeActivity(), SearchTopBar, NavBottomBar {
 
-    private val viewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
+    override val viewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
 
-    private val repairViewModel by lazy { ViewModelProvider(this).get(RepairViewModel::class.java) }
+    override lateinit var navController: NavHostController
 
-    private val eventViewModel by lazy { ViewModelProvider(this).get(EventViewModel::class.java) }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+    @Composable
+    override fun RowScope.leftComponents() {
+        Text(
+            text = viewModel.bottomBarItems[viewModel.select].title,
+            fontSize = 24.sp,
+            textAlign = TextAlign.Center,
+            color = Color.White,
+            modifier = Modifier.width(50.dp)
         )
-        draw()
     }
 
-    private fun draw() {
-        setContent {
-            val nav = rememberNavController()
-            CAMSGPAndroidTheme {
-                ProvideWindowInsets(consumeWindowInsets = false) {
-                    val scaffoldState = rememberScaffoldState()
-                    val scope = rememberCoroutineScope()
-                    rememberSystemUiController().setStatusBarColor(
-                        Color.Transparent,
-                        darkIcons = MaterialTheme.colors.isLight
-                    )
-                    Surface(color = MaterialTheme.colors.background) {
-                        Scaffold(
-                            scaffoldState = scaffoldState,
-                            topBar = { topBar() },
-                            bottomBar = { bottomAppBar(nav) },
-                            floatingActionButton = { item[viewModel.select].fab() },
-                            floatingActionButtonPosition = FabPosition.End
-                        ) {
-                            NavHost(
-                                navController = nav,
-                                startDestination = item[viewModel.select].title,
-                                modifier = Modifier.padding(it)
-                            ) {
-                                item.forEach { page ->
-                                    composable(page.title) {
-                                        page.draw()
-                                    }
-                                }
-                            }
-                            viewModel.errorMsg?.let {
-                                scope.launch {
-                                    scaffoldState.snackbarHostState.showSnackbar(it)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    override fun onSearch(key: String) {
+
     }
+
 }
 
 

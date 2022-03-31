@@ -1,10 +1,5 @@
 package com.gargantua7.cams.gp.android.ui.person
 
-import android.os.Bundle
-import android.view.WindowManager
-import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -13,8 +8,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
@@ -25,172 +18,101 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
-import com.gargantua7.cams.gp.android.ui.theme.CAMSGPAndroidTheme
-import com.google.accompanist.insets.ProvideWindowInsets
-import com.google.accompanist.insets.statusBarsHeight
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.launch
+import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
+import com.gargantua7.cams.gp.android.ui.component.topbar.BackTopBar
+import kotlinx.coroutines.CoroutineScope
 
-class SignInActivity : AppCompatActivity() {
+class SignInActivity : ComposeActivity(), BackTopBar {
 
-    val viewModel by lazy { ViewModelProvider(this).get(SignInViewModel::class.java) }
+    override val viewModel by lazy { ViewModelProvider(this).get(SignInViewModel::class.java) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+    @Composable
+    override fun RowScope.coreComponents() {
+        Text(
+            text = "Login",
+            fontSize = 24.sp,
+            textAlign = TextAlign.Center,
+            color = Color.White
         )
-        draw()
-    }
-
-    private fun draw() {
-        setContent {
-            CAMSGPAndroidTheme {
-                ProvideWindowInsets(consumeWindowInsets = false) {
-                    rememberSystemUiController().setStatusBarColor(
-                        Color.Transparent,
-                        darkIcons = MaterialTheme.colors.isLight
-                    )
-                    Surface(color = MaterialTheme.colors.background) {
-                        val scaffoldState = rememberScaffoldState()
-                        val scope = rememberCoroutineScope()
-                        val focus = LocalFocusManager.current
-                        Scaffold(
-                            scaffoldState = scaffoldState,
-                            topBar = { topBar() }
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(10.dp, 5.dp)
-                            ) {
-                                textField(
-                                    text = viewModel.username,
-                                    placeholder = "Username",
-                                    leadIcon = {
-                                        Icon(imageVector = Icons.Filled.AccountBox, contentDescription = "Username")
-                                    },
-                                    trailingIcon = {
-                                        if (viewModel.username.isNotEmpty()) {
-                                            IconButton(
-                                                onClick = { viewModel.username = "" }
-                                            ) {
-                                                Icon(
-                                                    Icons.Filled.Clear,
-                                                    "Clear"
-                                                )
-                                            }
-                                        }
-                                    },
-                                    keyboardType = KeyboardType.Number,
-                                    imeAction = ImeAction.Next,
-                                    onValueChange = {
-                                        viewModel.username = it
-                                    }
-                                )
-                                textField(text = viewModel.password,
-                                    placeholder = "Password",
-                                    leadIcon = {
-                                        Icon(imageVector = Icons.Filled.Password, contentDescription = "Password")
-                                    },
-                                    trailingIcon = {
-                                        if (viewModel.password.isNotEmpty()) {
-                                            if (viewModel.passwordVisibility) {
-                                                IconButton(onClick = { viewModel.passwordVisibility = false }) {
-                                                    Icon(
-                                                        imageVector = Icons.Filled.VisibilityOff,
-                                                        contentDescription = "VisibilityOFF"
-                                                    )
-                                                }
-                                            } else {
-                                                IconButton(onClick = { viewModel.passwordVisibility = true }) {
-                                                    Icon(
-                                                        imageVector = Icons.Filled.Visibility,
-                                                        contentDescription = "VisibilityON"
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    },
-                                    keyboardType = KeyboardType.Password,
-                                    keyboardActions = KeyboardActions(
-                                        onDone = {
-                                            focus.clearFocus()
-                                            if (
-                                                !viewModel.loading &&
-                                                viewModel.username.isNotBlank() &&
-                                                viewModel.password.isNotBlank()
-                                            ) viewModel.login()
-                                        }
-                                    ),
-                                    imeAction = ImeAction.Done,
-                                    visualTransformation =
-                                    if (viewModel.passwordVisibility) VisualTransformation.None
-                                    else PasswordVisualTransformation('*'),
-                                    onValueChange = {
-                                        viewModel.password = it
-                                    }
-                                )
-                                button()
-                                if (viewModel.errorMsg.isNotBlank()) {
-                                    scope.launch {
-                                        scaffoldState.snackbarHostState.showSnackbar(viewModel.errorMsg)
-                                    }
-                                }
-                                if (viewModel.loading) {
-                                    Column(
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                    ) {
-                                        CircularProgressIndicator()
-                                    }
-                                }
-                                if (viewModel.success) {
-                                    finish()
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     @Composable
-    fun topBar() {
+    override fun contentComponents(scaffoldState: ScaffoldState, scope: CoroutineScope) {
+        val focus = LocalFocusManager.current
         Column(
-            modifier = Modifier.background(MaterialTheme.colors.primary)
+            modifier = Modifier.padding(10.dp, 5.dp)
         ) {
-            Spacer(
-                modifier = Modifier
-                    .statusBarsHeight()
-                    .fillMaxWidth()
-            )
-            Column(
-                modifier = Modifier
-                    .height(55.dp)
-                    .padding(10.dp)
-            ) {
-                Row {
-                    IconButton(onClick = { finish() }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White
-                        )
+            textField(
+                text = viewModel.username,
+                placeholder = "Username",
+                leadIcon = {
+                    Icon(imageVector = Icons.Filled.AccountBox, contentDescription = "Username")
+                },
+                trailingIcon = {
+                    if (viewModel.username.isNotEmpty()) {
+                        IconButton(
+                            onClick = { viewModel.username = "" }
+                        ) {
+                            Icon(
+                                Icons.Filled.Clear,
+                                "Clear"
+                            )
+                        }
                     }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(
-                        text = "Login",
-                        fontSize = 24.sp,
-                        textAlign = TextAlign.Center,
-                        color = Color.White
-                    )
+                },
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next,
+                onValueChange = {
+                    viewModel.username = it
                 }
+            )
+            textField(text = viewModel.password,
+                placeholder = "Password",
+                leadIcon = {
+                    Icon(imageVector = Icons.Filled.Password, contentDescription = "Password")
+                },
+                trailingIcon = {
+                    if (viewModel.password.isNotEmpty()) {
+                        if (viewModel.passwordVisibility) {
+                            IconButton(onClick = { viewModel.passwordVisibility = false }) {
+                                Icon(
+                                    imageVector = Icons.Filled.VisibilityOff,
+                                    contentDescription = "VisibilityOFF"
+                                )
+                            }
+                        } else {
+                            IconButton(onClick = { viewModel.passwordVisibility = true }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Visibility,
+                                    contentDescription = "VisibilityON"
+                                )
+                            }
+                        }
+                    }
+                },
+                keyboardType = KeyboardType.Password,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focus.clearFocus()
+                        if (
+                            !viewModel.loading &&
+                            viewModel.username.isNotBlank() &&
+                            viewModel.password.isNotBlank()
+                        ) viewModel.login()
+                    }
+                ),
+                imeAction = ImeAction.Done,
+                visualTransformation =
+                if (viewModel.passwordVisibility) VisualTransformation.None
+                else PasswordVisualTransformation('*'),
+                onValueChange = {
+                    viewModel.password = it
+                }
+            )
+            button()
+            if (viewModel.success) {
+                finish()
             }
         }
     }

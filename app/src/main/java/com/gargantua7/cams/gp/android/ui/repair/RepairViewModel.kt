@@ -5,7 +5,10 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
@@ -16,6 +19,7 @@ import com.gargantua7.cams.gp.android.logic.model.Repair
 import com.gargantua7.cams.gp.android.logic.paging.ReplyPagingSource
 import com.gargantua7.cams.gp.android.logic.repository.RepairRepository
 import com.gargantua7.cams.gp.android.logic.repository.ReplyRepository
+import com.gargantua7.cams.gp.android.ui.component.compose.ComposeViewModel
 import com.gargantua7.cams.gp.android.ui.person.SignInActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,15 +28,11 @@ import java.net.UnknownHostException
 /**
  * @author Gargantua7
  */
-class RepairViewModel : ViewModel() {
+class RepairViewModel : ComposeViewModel() {
 
     var id = MutableLiveData<Long?>(null)
 
-    var loading by mutableStateOf(false)
-
     var fresh by mutableStateOf(false)
-
-    var errorMsg by mutableStateOf<String?>(null)
 
     var networkError by mutableStateOf(false)
 
