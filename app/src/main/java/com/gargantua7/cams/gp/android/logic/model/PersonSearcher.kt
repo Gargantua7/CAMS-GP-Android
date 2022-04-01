@@ -11,4 +11,4 @@ data class PersonSearcher(
     val sex: Boolean? = null,
     val depId: Int? = null,
     val permissionLevel: Int? = null
-) : Serializable
+) : Serializable, Searcher<Person>

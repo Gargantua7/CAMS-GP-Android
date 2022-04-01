@@ -11,11 +11,19 @@ import com.gargantua7.cams.gp.android.ui.component.topbar.SearchTopBar
  */
 class SearchViewModel : ComposeViewModel(), SearchTopBar.SearchTopBarViewModel {
 
-    var hasPerson = false
-    var hasRepair = false
+    var hasPerson by mutableStateOf(false)
+    var hasRepair by mutableStateOf(false)
     var picker = false
 
     override var value by mutableStateOf("")
 
     var picked by mutableStateOf<Pair<String, String>?>(null)
+
+    var mode by mutableStateOf(PREVIEW_MODE)
+
+    companion object {
+        const val PREVIEW_MODE = 0
+        const val REPAIR_FULL_MODE = 1
+        const val PERSON_FULL_MODE = 2
+    }
 }

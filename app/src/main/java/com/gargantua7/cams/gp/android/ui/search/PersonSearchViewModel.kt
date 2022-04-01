@@ -8,20 +8,22 @@ import androidx.lifecycle.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
+import com.gargantua7.cams.gp.android.logic.model.Person
 import com.gargantua7.cams.gp.android.logic.model.PersonSearcher
 import com.gargantua7.cams.gp.android.logic.paging.PersonPagingSource
+import com.gargantua7.cams.gp.android.logic.repository.PersonRepository
 import kotlinx.coroutines.Dispatchers
 
 /**
  * @author Gargantua7
  */
-class PersonSearchViewModel : ViewModel() {
+class PersonSearchViewModel : ViewModel(), SearchComponent.SearchComponentViewModel<Person> {
 
-    val searcher = MutableLiveData<PersonSearcher>()
+    override val searcher = MutableLiveData<PersonSearcher>()
 
-    var loading by mutableStateOf(false)
+    override var loading by mutableStateOf(false)
 
-    val persons = Transformations.switchMap(searcher) {
+    override val items = Transformations.switchMap(searcher) {
         Log.d("PersonSearch-VM", "Refresh Persons -> $it")
         liveData(Dispatchers.IO) {
             emit(
@@ -29,6 +31,14 @@ class PersonSearchViewModel : ViewModel() {
                     PersonPagingSource(it)
                 }.flow.cachedIn(viewModelScope)
             )
+        }
+    }
+
+    override val preview = Transformations.switchMap(searcher) {
+        liveData(Dispatchers.IO) {
+            PersonRepository.searchPerson(0, it).let {
+                emit(if (it.isSuccess) it.getOrThrow().let { list -> list.subList(0, minOf(list.size, 5)) } else null)
+            }
         }
     }
 

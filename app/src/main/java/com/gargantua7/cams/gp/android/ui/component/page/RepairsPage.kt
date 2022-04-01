@@ -83,13 +83,13 @@ abstract class RepairsPage : ListPage<Repair>() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Card(
-                        onClick = {
-                            Intent(context, RepairActivity::class.java).let {
-                                it.putExtra("id", repair.id)
-                                it.putExtra("reply", true)
-                                context.startActivity(it)
-                            }
-                        },
+//                        onClick = {
+//                            Intent(context, RepairActivity::class.java).let {
+//                                it.putExtra("id", repair.id)
+//                                it.putExtra("reply", true)
+//                                context.startActivity(it)
+//                            }
+//                        },
                         elevation = 0.dp,
                         modifier = Modifier
                             .weight(0.5f)

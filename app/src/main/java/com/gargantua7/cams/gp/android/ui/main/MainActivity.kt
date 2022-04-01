@@ -1,5 +1,6 @@
 package com.gargantua7.cams.gp.android.ui.main
 
+import android.content.Intent
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
@@ -14,6 +15,7 @@ import androidx.navigation.NavHostController
 import com.gargantua7.cams.gp.android.ui.component.bottombar.NavBottomBar
 import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
 import com.gargantua7.cams.gp.android.ui.component.topbar.SearchTopBar
+import com.gargantua7.cams.gp.android.ui.search.SearchActivity
 
 class MainActivity : ComposeActivity(), SearchTopBar, NavBottomBar {
 
@@ -33,7 +35,12 @@ class MainActivity : ComposeActivity(), SearchTopBar, NavBottomBar {
     }
 
     override fun onSearch(key: String) {
-
+        startActivity(Intent(this, SearchActivity::class.java).apply {
+            putExtra("person", true)
+            putExtra("repair", true)
+            putExtra("key", key)
+        })
+        viewModel.value = ""
     }
 
 }

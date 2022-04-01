@@ -12,4 +12,4 @@ data class RepairSearcher(
     val principal: String? = null,
     val state: Boolean? = null,
     val unassigned: Boolean = false
-) : Serializable
+) : Serializable, Searcher<Repair>

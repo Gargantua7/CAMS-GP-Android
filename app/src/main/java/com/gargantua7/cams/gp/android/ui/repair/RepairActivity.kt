@@ -207,6 +207,7 @@ class RepairActivity : ComposeActivity(), BackTopBar, BottomBar {
                             context.run {
                                 Intent(this, SearchActivity::class.java).let {
                                     it.putExtra("person", true)
+                                    it.putExtra("picker", true)
                                     it.putExtra("ps", PersonSearcher(depId = 1))
                                     startWithRes.launch(it)
                                 }
