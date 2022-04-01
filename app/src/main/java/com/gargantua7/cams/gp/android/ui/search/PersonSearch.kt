@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.gargantua7.cams.gp.android.logic.model.Person
 import com.gargantua7.cams.gp.android.ui.component.page.PersonsPage
 
@@ -35,6 +36,9 @@ class PersonSearch(override val viewModel: PersonSearchViewModel) : PersonsPage(
     @Composable
     override fun draw() {
         val items by viewModel.items.observeAsState()
-        items?.let { swipe(flow = it) }
+        items?.let {
+            this.items = it.collectAsLazyPagingItems()
+            swipe()
+        }
     }
 }

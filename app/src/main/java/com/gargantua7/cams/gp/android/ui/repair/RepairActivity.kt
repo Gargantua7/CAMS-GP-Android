@@ -36,14 +36,15 @@ import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.logic.model.*
 import com.gargantua7.cams.gp.android.ui.component.bottombar.BottomBar
 import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
+import com.gargantua7.cams.gp.android.ui.component.swipeable.Swipeable
 import com.gargantua7.cams.gp.android.ui.component.topbar.BackTopBar
 import com.gargantua7.cams.gp.android.ui.search.SearchActivity
 import com.gargantua7.cams.gp.android.ui.util.toIntuitive
 import com.google.accompanist.insets.navigationBarsWithImePadding
-import kotlinx.coroutines.CoroutineScope
+import com.google.accompanist.swiperefresh.SwipeRefreshState
 import kotlinx.coroutines.launch
 
-class RepairActivity : ComposeActivity(), BackTopBar, BottomBar {
+class RepairActivity : ComposeActivity(), BackTopBar, BottomBar, Swipeable {
 
     override val viewModel by lazy { ViewModelProvider(this).get(RepairViewModel::class.java) }
 
@@ -65,7 +66,8 @@ class RepairActivity : ComposeActivity(), BackTopBar, BottomBar {
     }
 
     @Composable
-    override fun contentComponents(scaffoldState: ScaffoldState, scope: CoroutineScope) {
+    override fun swipeContent(refreshState: SwipeRefreshState) {
+        refreshState.isRefreshing = viewModel.fresh
         val repair by viewModel.repair.observeAsState()
         val rs by viewModel.replies.observeAsState()
         val replies = rs?.collectAsLazyPagingItems()
@@ -108,6 +110,10 @@ class RepairActivity : ComposeActivity(), BackTopBar, BottomBar {
         } ?: run {
 
         }
+    }
+
+    override fun onRefresh() {
+        viewModel.fresh = true
     }
 
     @Composable

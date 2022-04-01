@@ -1,6 +1,5 @@
 package com.gargantua7.cams.gp.android.ui.main
 
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -10,6 +9,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.ui.component.page.NavPage
 import com.gargantua7.cams.gp.android.ui.component.page.RepairsPage
@@ -24,11 +24,10 @@ object Repairs : RepairsPage(), NavPage {
     override val title = stringResource(R.string.home)
     override val icon = Icons.Filled.Home
 
-    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     override fun draw() {
-        val repairs = viewModel(RepairViewModel::class.java).repairs
-        swipe(flow = repairs)
+        items = viewModel(RepairViewModel::class.java).repairs.collectAsLazyPagingItems()
+        swipe()
     }
 
     @Composable

@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.gargantua7.cams.gp.android.ui.component.bottombar.BottomBar
 import com.gargantua7.cams.gp.android.ui.component.bottombar.NavBottomBar
+import com.gargantua7.cams.gp.android.ui.component.swipeable.Swipeable
 import com.gargantua7.cams.gp.android.ui.component.topbar.TopBar
 import com.gargantua7.cams.gp.android.ui.theme.CAMSGPAndroidTheme
 import com.google.accompanist.insets.ProvideWindowInsets
@@ -97,6 +98,7 @@ abstract class ComposeActivity : AppCompatActivity() {
      *
      * 如果此类同样实现了以下接口，将自动添加组件
      * - [NavBottomBar]
+     * - [Swipeable]
      */
     @Composable
     protected open fun contentComponents(scaffoldState: ScaffoldState, scope: CoroutineScope) {
@@ -114,6 +116,9 @@ abstract class ComposeActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+        if (this is Swipeable) {
+            swipe()
         }
     }
 }

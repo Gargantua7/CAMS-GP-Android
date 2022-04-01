@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.gargantua7.cams.gp.android.logic.model.Repair
 import com.gargantua7.cams.gp.android.ui.component.page.RepairsPage
 import com.gargantua7.cams.gp.android.ui.repair.RepairActivity
@@ -37,6 +38,9 @@ class RepairSearch(override val viewModel: RepairSearchViewModel) : RepairsPage(
     @Composable
     override fun draw() {
         val items by viewModel.items.observeAsState()
-        items?.let { swipe(flow = it) }
+        items?.let {
+            this.items = it.collectAsLazyPagingItems()
+            swipe()
+        }
     }
 }
