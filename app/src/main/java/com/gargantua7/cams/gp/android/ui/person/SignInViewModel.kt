@@ -11,7 +11,6 @@ import com.gargantua7.cams.gp.android.logic.model.Secret
 import com.gargantua7.cams.gp.android.logic.repository.PersonRepository
 import com.gargantua7.cams.gp.android.logic.repository.SecretRepository
 import com.gargantua7.cams.gp.android.ui.component.compose.ComposeViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 import java.time.LocalDateTime
@@ -39,18 +38,17 @@ class SignInViewModel : ComposeViewModel() {
                 CAMSApplication.session.value = session
                 SecretRepository.saveSession()
                 PersonRepository.saveUsername()
-                errorMsg = "Login Success"
-                delay(1000)
+                showSnackBar("Login Success")
                 success = true
             } else {
-                errorMsg = when (result.exceptionOrNull()) {
-                    is AuthorizedException -> "Username or Password Wrong"
-                    is UnknownHostException -> "Network Error"
-                    else -> "Unknown Exception: Please Call System Admin"
-                }
-                delay(1000)
+                showSnackBar(
+                    when (result.exceptionOrNull()) {
+                        is AuthorizedException -> "Username or Password Wrong"
+                        is UnknownHostException -> "Network Error"
+                        else -> "Unknown Exception: Please Call System Admin"
+                    }
+                )
             }
-            errorMsg = ""
         }
     }
 }

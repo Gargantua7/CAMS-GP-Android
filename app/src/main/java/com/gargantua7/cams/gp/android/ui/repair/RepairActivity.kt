@@ -36,6 +36,7 @@ import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.logic.model.*
 import com.gargantua7.cams.gp.android.ui.component.bottombar.BottomBar
 import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
+import com.gargantua7.cams.gp.android.ui.component.compose.basicDialog
 import com.gargantua7.cams.gp.android.ui.component.swipeable.Swipeable
 import com.gargantua7.cams.gp.android.ui.component.topbar.BackTopBar
 import com.gargantua7.cams.gp.android.ui.search.SearchActivity
@@ -251,13 +252,17 @@ class RepairActivity : ComposeActivity(), BackTopBar, BottomBar, Swipeable {
                             interactionSource = MutableInteractionSource(),
                             indication = null
                         ) {
-                            viewModel.stateChangeDialog = true
+                            viewModel.showDialog {
+                                basicDialog(
+                                    title = "Change State to ${if (viewModel.repair.value?.state == true) "CLOSE" else "OPEN"}",
+                                    confirmOnClick = { viewModel.changeState() }
+                                )
+                            }
                         }
                     } else this
                 } ?: this
             }
         ) {
-            dialog()
             Text(
                 text = if (repair.state) "OPEN" else "CLOSE",
                 fontSize = 12.sp,
@@ -269,24 +274,6 @@ class RepairActivity : ComposeActivity(), BackTopBar, BottomBar, Swipeable {
                 "Lens",
                 tint = if (repair.state) Color.Green else Color.Red,
                 modifier = Modifier.size(11.dp)
-            )
-        }
-    }
-
-    @Composable
-    fun dialog() {
-        if (viewModel.stateChangeDialog) {
-            AlertDialog(
-                onDismissRequest = { viewModel.stateChangeDialog = false },
-                title = { Text(text = "Change State to ${if (viewModel.repair.value?.state == true) "CLOSE" else "OPEN"}") },
-                confirmButton = {
-                    TextButton(onClick = {
-                        viewModel.changeState()
-                        viewModel.stateChangeDialog = false
-                    }) {
-                        Text(text = "Sure")
-                    }
-                },
             )
         }
     }

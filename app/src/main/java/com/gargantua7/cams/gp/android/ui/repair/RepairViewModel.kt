@@ -36,8 +36,6 @@ class RepairViewModel : ComposeViewModel() {
 
     var networkError by mutableStateOf(false)
 
-    var stateChangeDialog by mutableStateOf(false)
-
     var editor by mutableStateOf("")
 
     val repair = Transformations.switchMap(id) {
@@ -65,15 +63,17 @@ class RepairViewModel : ComposeViewModel() {
             loading = false
             return result.getOrThrow()
         } else {
-            errorMsg = when (result.exceptionOrNull()) {
-                is AuthorizedException -> "Invalid Session"
-                is NotFoundException -> "Not Found"
-                is UnknownHostException -> {
-                    networkError = true
-                    "Network Error"
+            showSnackBar(
+                when (result.exceptionOrNull()) {
+                    is AuthorizedException -> "Invalid Session"
+                    is NotFoundException -> "Not Found"
+                    is UnknownHostException -> {
+                        networkError = true
+                        "Network Error"
+                    }
+                    else -> "Unknown Server Exception"
                 }
-                else -> "Unknown Server Exception"
-            }
+            )
             Log.w("Get Repair($id) Has Exception", result.exceptionOrNull())
         }
         loading = false
@@ -94,17 +94,18 @@ class RepairViewModel : ComposeViewModel() {
         id.value?.let {
             viewModelScope.launch {
                 val res = ReplyRepository.sendReplyForRepair(it, editor)
-                errorMsg = if (res.isSuccess) {
-                    editor = ""
-                    fresh = true
-                    "Send Reply Success"
-                } else {
-                    val e = res.exceptionOrNull()
-                    when (e) {
-                        is AuthorizedException -> "Login Expired"
-                        else -> "Unknown Exception"
+                showSnackBar(
+                    if (res.isSuccess) {
+                        editor = ""
+                        fresh = true
+                        "Send Reply Success"
+                    } else {
+                        when (res.exceptionOrNull()) {
+                            is AuthorizedException -> "Login Expired"
+                            else -> "Unknown Exception"
+                        }
                     }
-                }
+                )
             }
         }
     }
@@ -113,38 +114,42 @@ class RepairViewModel : ComposeViewModel() {
         viewModelScope.launch {
             val state = if (repair.value?.state == true) RepairRepository.STATE_CLOSE else RepairRepository.STATE_OPEN
             id.value?.let { RepairRepository.changeState(it, state) }?.let {
-                errorMsg = if (it.isSuccess) {
-                    editor = ""
-                    id.value = id.value
-                    "State Change Success"
-                } else {
-                    val e = it.exceptionOrNull()
-                    when (e) {
-                        is AuthorizedException -> "Insufficient Permissions"
-                        else -> "Unknown Exception"
+                showSnackBar(
+                    if (it.isSuccess) {
+                        editor = ""
+                        id.value = id.value
+                        "State Change Success"
+                    } else {
+                        val e = it.exceptionOrNull()
+                        when (e) {
+                            is AuthorizedException -> "Insufficient Permissions"
+                            else -> "Unknown Exception"
+                        }
                     }
-                }
+                )
             }
         }
     }
 
     fun assignPrinciple(principle: String) {
         if (principle == repair.value?.principal?.username) {
-            errorMsg = "Not Action Require"
+            showSnackBar("Not Action Require")
             return
         }
         viewModelScope.launch {
             id.value?.let { RepairRepository.assignPrinciple(it, principle) }?.let {
-                errorMsg = if (it.isSuccess) {
-                    id.value = id.value
-                    "Assign Principle Success"
-                } else {
-                    val e = it.exceptionOrNull()
-                    when (e) {
-                        is AuthorizedException -> "Insufficient Permissions"
-                        else -> "Unknown Exception"
+                showSnackBar(
+                    if (it.isSuccess) {
+                        id.value = id.value
+                        "Assign Principle Success"
+                    } else {
+                        val e = it.exceptionOrNull()
+                        when (e) {
+                            is AuthorizedException -> "Insufficient Permissions"
+                            else -> "Unknown Exception"
+                        }
                     }
-                }
+                )
             }
         }
     }

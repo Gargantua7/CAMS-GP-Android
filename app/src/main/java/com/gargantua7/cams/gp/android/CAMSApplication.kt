@@ -27,7 +27,7 @@ import java.net.UnknownHostException
 class CAMSApplication : Application() {
 
     companion object {
-        lateinit var _context: WeakReference<Context> private set
+        private lateinit var _context: WeakReference<Context>
         val context by lazy { _context.get()!! }
         var username: String? = null
         var session = MutableLiveData<String?>()

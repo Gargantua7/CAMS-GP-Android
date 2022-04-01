@@ -5,7 +5,10 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
@@ -19,15 +22,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gargantua7.cams.gp.android.CAMSApplication
 import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.logic.repository.PersonRepository
 import com.gargantua7.cams.gp.android.logic.repository.SecretRepository
+import com.gargantua7.cams.gp.android.ui.component.compose.basicDialog
 import com.gargantua7.cams.gp.android.ui.component.page.NavPage
 import com.gargantua7.cams.gp.android.ui.person.SignInActivity
 import com.gargantua7.cams.gp.android.ui.util.stringResource
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -44,8 +46,8 @@ object Me : NavPage {
         Log.d("Fragment View CREATE", "Me")
         val user by CAMSApplication.user.observeAsState()
         val session by CAMSApplication.session.observeAsState()
-        val vm = viewModel(MeViewModel::class.java)
-        dialog()
+        val context = LocalContext.current as MainActivity
+        val scope = rememberCoroutineScope()
         Column {
             if (user != null || session != null) {
                 user?.let {
@@ -124,7 +126,26 @@ object Me : NavPage {
                             .background(MaterialTheme.colors.surface)
                             .fillMaxWidth()
                             .clickable {
-                                vm.logoutDialog = true
+                                context.apply {
+                                    viewModel.showDialog {
+                                        basicDialog(
+                                            title = "Sure Logout?",
+                                            confirmOnClick = {
+                                                CAMSApplication.session.value = null
+                                                CAMSApplication.username = null
+                                                scope.launch {
+                                                    SecretRepository.signOut()
+                                                }
+                                                scope.launch {
+                                                    SecretRepository.removeSession()
+                                                    PersonRepository.removeUsername()
+                                                    viewModel.showSnackBar("Logout Success")
+                                                }
+                                            },
+                                            confirmTextColor = Color.Red
+                                        )
+                                    }
+                                }
                             }
                     ) {
                         Spacer(modifier = Modifier.width(15.dp))
@@ -138,7 +159,6 @@ object Me : NavPage {
                     }
                 }
             } else {
-                val context = LocalContext.current
                 Column {
                     Row(
                         modifier = Modifier
@@ -170,41 +190,6 @@ object Me : NavPage {
 
     @Composable
     override fun fab() {
-
     }
-
-    @Composable
-    fun dialog() {
-        val vm = viewModel(MeViewModel::class.java)
-        val scope = rememberCoroutineScope()
-        val mainVM = viewModel(MainViewModel::class.java)
-        if (vm.logoutDialog) {
-            AlertDialog(
-                onDismissRequest = { vm.logoutDialog = false },
-                title = { Text(text = "Sure Logout?") },
-                confirmButton = {
-                    TextButton(onClick = {
-                        CAMSApplication.session.value = null
-                        CAMSApplication.username = null
-                        scope.launch {
-                            SecretRepository.signOut()
-                        }
-                        scope.launch {
-                            SecretRepository.removeSession()
-                            PersonRepository.removeUsername()
-                            mainVM.errorMsg = "Logout Success"
-                            delay(1000)
-                            mainVM.errorMsg = null
-                        }
-                        vm.logoutDialog = false
-                    }) {
-                        Text(text = "Sure", color = Color.Red)
-                    }
-                },
-            )
-        }
-    }
-
-
 }
 

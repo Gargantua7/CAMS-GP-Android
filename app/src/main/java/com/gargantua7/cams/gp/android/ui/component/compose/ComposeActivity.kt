@@ -66,7 +66,6 @@ abstract class ComposeActivity : AppCompatActivity() {
                             },
                             floatingActionButtonPosition = FabPosition.End
                         ) {
-
                             Box(modifier = Modifier.padding(it)) {
                                 contentComponents(scaffoldState, scope)
                             }
@@ -80,12 +79,15 @@ abstract class ComposeActivity : AppCompatActivity() {
                                     CircularProgressIndicator()
                                 }
                             }
-                        }
-                        viewModel.errorMsg?.let {
-                            scope.launch {
-                                scaffoldState.snackbarHostState.showSnackbar(it)
+                            viewModel.errorMsg?.let {
+                                scope.launch {
+                                    scaffoldState.snackbarHostState.showSnackbar(it)
+                                }
+                                viewModel.errorMsg = null
                             }
-                            viewModel.errorMsg = null
+                            viewModel.dialog?.let {
+                                viewModel.it()
+                            }
                         }
                     }
                 }
