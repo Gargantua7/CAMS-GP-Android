@@ -12,5 +12,7 @@ interface NavPage : Page {
     val icon: ImageVector
 
     @Composable
-    fun fab()
+    fun fab() {
+
+    }
 }

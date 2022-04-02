@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import com.gargantua7.cams.gp.android.ui.component.bottombar.NavBottomBar
 import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
+import com.gargantua7.cams.gp.android.ui.component.swipeable.Swipeable
 import com.gargantua7.cams.gp.android.ui.component.topbar.SearchTopBar
 import com.gargantua7.cams.gp.android.ui.search.SearchActivity
 
@@ -32,6 +33,15 @@ class MainActivity : ComposeActivity(), SearchTopBar, NavBottomBar {
             color = Color.White,
             modifier = Modifier.width(50.dp)
         )
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        viewModel.bottomBarItems[viewModel.select].let {
+            if (it is Swipeable) {
+                it.onRefresh()
+            }
+        }
     }
 
     override fun onSearch(key: String) {

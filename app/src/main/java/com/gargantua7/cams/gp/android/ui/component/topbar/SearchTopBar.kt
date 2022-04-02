@@ -23,6 +23,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gargantua7.cams.gp.android.ui.util.clearFocusOnKeyboardDismiss
 
 /**
  * @author Gargantua7
@@ -64,7 +65,9 @@ interface SearchTopBar : TopBar {
                     focus.clearFocus()
                 },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .clearFocusOnKeyboardDismiss()
             ) {
                 if (viewModel.value.isEmpty()) {
                     Text(

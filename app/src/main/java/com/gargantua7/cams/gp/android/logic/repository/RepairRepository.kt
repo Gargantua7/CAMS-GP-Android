@@ -1,5 +1,6 @@
 package com.gargantua7.cams.gp.android.logic.repository
 
+import com.gargantua7.cams.gp.android.logic.model.NewRepair
 import com.gargantua7.cams.gp.android.logic.model.RepairSearcher
 import com.gargantua7.cams.gp.android.logic.network.NetworkServiceCreator
 import com.gargantua7.cams.gp.android.logic.network.RepairService
@@ -34,6 +35,10 @@ object RepairRepository {
 
     suspend fun assignPrinciple(id: Long, principle: String) = fire {
         repairService.assignPrinciple(id, principle).get()
+    }
+
+    suspend fun createNewRepair(repair: NewRepair) = fire {
+        repairService.createNewRepair(repair).get()
     }
 
 }

@@ -1,5 +1,6 @@
 package com.gargantua7.cams.gp.android.ui.person
 
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -112,6 +113,7 @@ class SignInActivity : ComposeActivity(), BackTopBar {
             )
             button()
             if (viewModel.success) {
+                setResult(RESULT_OK, Intent().putExtra("msg", "Login Success"))
                 finish()
             }
         }

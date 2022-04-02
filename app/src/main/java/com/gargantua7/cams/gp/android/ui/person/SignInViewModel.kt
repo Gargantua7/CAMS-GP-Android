@@ -38,7 +38,6 @@ class SignInViewModel : ComposeViewModel() {
                 CAMSApplication.session.value = session
                 SecretRepository.saveSession()
                 PersonRepository.saveUsername()
-                showSnackBar("Login Success")
                 success = true
             } else {
                 showSnackBar(

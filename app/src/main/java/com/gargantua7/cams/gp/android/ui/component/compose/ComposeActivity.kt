@@ -1,8 +1,11 @@
 package com.gargantua7.cams.gp.android.ui.component.compose
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -16,10 +19,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.gargantua7.cams.gp.android.ui.component.bottombar.BottomBar
 import com.gargantua7.cams.gp.android.ui.component.bottombar.NavBottomBar
+import com.gargantua7.cams.gp.android.ui.component.resizable.Resizable
 import com.gargantua7.cams.gp.android.ui.component.swipeable.Swipeable
 import com.gargantua7.cams.gp.android.ui.component.topbar.TopBar
 import com.gargantua7.cams.gp.android.ui.theme.CAMSGPAndroidTheme
 import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -31,6 +36,14 @@ abstract class ComposeActivity : AppCompatActivity() {
 
     abstract val viewModel: ComposeViewModel
 
+    private val msgResLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.getStringExtra("msg")?.let { res ->
+                viewModel.showSnackBar(res)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -39,6 +52,10 @@ abstract class ComposeActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
         draw()
+    }
+
+    fun startActivityWithMsgResult(intent: Intent) {
+        msgResLauncher.launch(intent)
     }
 
     private fun draw() {
@@ -51,7 +68,10 @@ abstract class ComposeActivity : AppCompatActivity() {
                         Color.Transparent,
                         darkIcons = MaterialTheme.colors.isLight
                     )
-                    Surface(color = MaterialTheme.colors.background) {
+                    Surface(
+                        color = MaterialTheme.colors.background,
+                        modifier = if (this is Resizable) Modifier.navigationBarsWithImePadding() else Modifier
+                    ) {
                         Scaffold(
                             scaffoldState = scaffoldState,
                             topBar = { if (this is TopBar) topBar() },

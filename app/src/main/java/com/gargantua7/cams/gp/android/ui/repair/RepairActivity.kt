@@ -37,15 +37,16 @@ import com.gargantua7.cams.gp.android.logic.model.*
 import com.gargantua7.cams.gp.android.ui.component.bottombar.BottomBar
 import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
 import com.gargantua7.cams.gp.android.ui.component.compose.basicDialog
+import com.gargantua7.cams.gp.android.ui.component.resizable.Resizable
 import com.gargantua7.cams.gp.android.ui.component.swipeable.Swipeable
 import com.gargantua7.cams.gp.android.ui.component.topbar.BackTopBar
 import com.gargantua7.cams.gp.android.ui.search.SearchActivity
+import com.gargantua7.cams.gp.android.ui.util.clearFocusOnKeyboardDismiss
 import com.gargantua7.cams.gp.android.ui.util.toIntuitive
-import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.swiperefresh.SwipeRefreshState
 import kotlinx.coroutines.launch
 
-class RepairActivity : ComposeActivity(), BackTopBar, BottomBar, Swipeable {
+class RepairActivity : ComposeActivity(), BackTopBar, BottomBar, Swipeable, Resizable {
 
     override val viewModel by lazy { ViewModelProvider(this).get(RepairViewModel::class.java) }
 
@@ -121,18 +122,21 @@ class RepairActivity : ComposeActivity(), BackTopBar, BottomBar, Swipeable {
     override fun bottomBar() {
         Row(
             verticalAlignment = Alignment.Bottom,
-            modifier = Modifier
-                .navigationBarsWithImePadding()
-                .background(MaterialTheme.colors.surface)
+            modifier = Modifier.background(MaterialTheme.colors.surface)
         ) {
             TextField(
                 value = viewModel.editor,
                 onValueChange = { viewModel.editor = it },
                 maxLines = 5,
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Transparent
+                    backgroundColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
                 ),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .clearFocusOnKeyboardDismiss()
             )
             IconButton(
                 onClick = { viewModel.sendRepair() },
@@ -240,6 +244,19 @@ class RepairActivity : ComposeActivity(), BackTopBar, BottomBar, Swipeable {
     @Composable
     fun state(repair: Repair) {
         val user by CAMSApplication.user.observeAsState()
+        if (repair.private) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Filled.Lock,
+                    contentDescription = "private",
+                    modifier = Modifier.size(12.dp),
+                    tint = MaterialTheme.colors.secondary
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(text = "Private", fontSize = 12.sp, color = MaterialTheme.colors.secondary)
+                Spacer(modifier = Modifier.width(10.dp))
+            }
+        }
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.run {

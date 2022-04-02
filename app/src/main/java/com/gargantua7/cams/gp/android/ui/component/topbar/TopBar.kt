@@ -47,9 +47,9 @@ interface TopBar {
                     .padding(10.dp)
             ) {
                 leftComponents()
-                Spacer(modifier = Modifier.padding(5.dp))
+                Spacer(modifier = Modifier.width(5.dp))
                 coreComponents()
-                Spacer(modifier = Modifier.padding(5.dp))
+                Spacer(modifier = Modifier.weight(1f))
                 rightComponents()
             }
         }

@@ -2,6 +2,7 @@ package com.gargantua7.cams.gp.android.logic.network
 
 import com.gargantua7.cams.gp.android.CAMSApplication
 import com.gargantua7.cams.gp.android.logic.model.NetworkResponse
+import com.gargantua7.cams.gp.android.logic.model.NewRepair
 import com.gargantua7.cams.gp.android.logic.model.NoResultResponse
 import com.gargantua7.cams.gp.android.logic.model.Repair
 import retrofit2.http.*
@@ -43,4 +44,9 @@ interface RepairService {
         @Header("session") session: String? = CAMSApplication.session.value
     ): NoResultResponse
 
+    @POST("repair/create")
+    suspend fun createNewRepair(
+        @Body repair: NewRepair,
+        @Header("session") session: String? = CAMSApplication.session.value
+    ): NoResultResponse
 }

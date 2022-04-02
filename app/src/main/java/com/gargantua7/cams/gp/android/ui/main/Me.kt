@@ -164,7 +164,7 @@ object Me : NavPage {
                         modifier = Modifier
                             .background(MaterialTheme.colors.surface)
                             .clickable {
-                                context.startActivity(Intent(context, SignInActivity::class.java))
+                                context.startActivityWithMsgResult(Intent(context, SignInActivity::class.java))
                             }
                     ) {
                         Column(
@@ -186,10 +186,6 @@ object Me : NavPage {
                 }
             }
         }
-    }
-
-    @Composable
-    override fun fab() {
     }
 }
 
