@@ -10,6 +10,7 @@ object EventRepository {
 
     private val eventService = NetworkServiceCreator.create(EventService::class.java)
 
-    suspend fun getEvents(page: Int) = fire { eventService.getEvents(page).get() }
+    suspend fun getEventsList(page: Int) = fire { eventService.getEventsList(page).get() }
 
+    suspend fun getEvent(id: Long) = fire { eventService.getEvent(id).get() }
 }

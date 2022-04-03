@@ -15,7 +15,7 @@ class EventPagingSource: PagingSource<Int, Event>() {
         return try {
             val page = params.key ?: 0
             Log.d("event paging pages", page.toString())
-            val res = EventRepository.getEvents(page)
+            val res = EventRepository.getEventsList(page)
             val events = res.getOrThrow()
             Log.d("event paging list size", events.size.toString())
             val prev = if (page > 0) page - 1 else null

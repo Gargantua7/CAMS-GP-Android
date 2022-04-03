@@ -1,6 +1,7 @@
 package com.gargantua7.cams.gp.android.ui.component.page
 
 import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gargantua7.cams.gp.android.logic.model.Event
+import com.gargantua7.cams.gp.android.ui.event.EventActivity
 import com.gargantua7.cams.gp.android.ui.util.format
 import java.time.LocalDateTime
 
@@ -25,7 +27,10 @@ import java.time.LocalDateTime
 abstract class EventsPage : ListPage<Event>() {
 
     override fun itemOnClick(event: Event, context: Context) {
-        TODO("Not yet implemented")
+        Intent(context, EventActivity::class.java).let {
+            it.putExtra("id", event.id)
+            context.startActivity(it)
+        }
     }
 
     @OptIn(ExperimentalMaterialApi::class)

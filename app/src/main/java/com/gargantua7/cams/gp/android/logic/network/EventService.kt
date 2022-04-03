@@ -11,6 +11,8 @@ import retrofit2.http.Path
 interface EventService {
 
     @GET("event/list/{page}")
-    suspend fun getEvents(@Path("page") page: Int): NetworkResponse<List<Event>>
+    suspend fun getEventsList(@Path("page") page: Int): NetworkResponse<List<Event>>
 
+    @GET("event/{id}/get")
+    suspend fun getEvent(@Path("id") id: Long): NetworkResponse<Event>
 }
