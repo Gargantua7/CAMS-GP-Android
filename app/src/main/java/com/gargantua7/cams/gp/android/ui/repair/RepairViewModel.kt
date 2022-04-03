@@ -1,11 +1,9 @@
 package com.gargantua7.cams.gp.android.ui.repair
 
 import android.content.Intent
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
@@ -14,36 +12,21 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.gargantua7.cams.gp.android.CAMSApplication
 import com.gargantua7.cams.gp.android.logic.exception.AuthorizedException
-import com.gargantua7.cams.gp.android.logic.exception.NotFoundException
 import com.gargantua7.cams.gp.android.logic.model.Repair
 import com.gargantua7.cams.gp.android.logic.paging.ReplyPagingSource
 import com.gargantua7.cams.gp.android.logic.repository.RepairRepository
 import com.gargantua7.cams.gp.android.logic.repository.ReplyRepository
-import com.gargantua7.cams.gp.android.ui.component.compose.ComposeViewModel
+import com.gargantua7.cams.gp.android.ui.component.compose.ExhibitComposeViewModel
 import com.gargantua7.cams.gp.android.ui.person.SignInActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.net.UnknownHostException
 
 /**
  * @author Gargantua7
  */
-class RepairViewModel : ComposeViewModel() {
-
-    var id = MutableLiveData<Long?>(null)
-
-    var fresh by mutableStateOf(false)
-
-    var networkError by mutableStateOf(false)
+class RepairViewModel : ExhibitComposeViewModel<Repair, Long>() {
 
     var editor by mutableStateOf("")
-
-    val repair = Transformations.switchMap(id) {
-        liveData(Dispatchers.IO) {
-            if (it == null) emit(null)
-            else emit(getRepair(it))
-        }
-    }
 
     val replies = Transformations.switchMap(id) {
         liveData(Dispatchers.IO) {
@@ -56,31 +39,9 @@ class RepairViewModel : ComposeViewModel() {
         }
     }
 
-    suspend fun getRepair(id: Long): Repair? {
-        loading = true
-        val result = RepairRepository.getRepairById(id)
-        if (result.isSuccess) {
-            loading = false
-            return result.getOrThrow()
-        } else {
-            showSnackBar(
-                when (result.exceptionOrNull()) {
-                    is AuthorizedException -> "Invalid Session"
-                    is NotFoundException -> "Not Found"
-                    is UnknownHostException -> {
-                        networkError = true
-                        "Network Error"
-                    }
-                    else -> "Unknown Server Exception"
-                }
-            )
-            Log.w("Get Repair($id) Has Exception", result.exceptionOrNull())
-        }
-        loading = false
-        return null
-    }
+    override suspend fun getItem(id: Long) = RepairRepository.getRepairById(id)
 
-    fun sendRepair() {
+    fun sendReply() {
         if (editor.isBlank()) return
         if (CAMSApplication.session.value == null) {
             CAMSApplication.context.apply {
@@ -112,7 +73,7 @@ class RepairViewModel : ComposeViewModel() {
 
     fun changeState() {
         viewModelScope.launch {
-            val state = if (repair.value?.state == true) RepairRepository.STATE_CLOSE else RepairRepository.STATE_OPEN
+            val state = if (item.value?.state == true) RepairRepository.STATE_CLOSE else RepairRepository.STATE_OPEN
             id.value?.let { RepairRepository.changeState(it, state) }?.let {
                 showSnackBar(
                     if (it.isSuccess) {
@@ -132,7 +93,7 @@ class RepairViewModel : ComposeViewModel() {
     }
 
     fun assignPrinciple(principle: String) {
-        if (principle == repair.value?.principal?.username) {
+        if (principle == item.value?.principal?.username) {
             showSnackBar("Not Action Require")
             return
         }

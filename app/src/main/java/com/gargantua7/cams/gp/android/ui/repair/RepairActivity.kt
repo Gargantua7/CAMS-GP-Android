@@ -17,36 +17,30 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.gargantua7.cams.gp.android.CAMSApplication
-import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.logic.model.*
 import com.gargantua7.cams.gp.android.ui.component.bottombar.BottomBar
-import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
+import com.gargantua7.cams.gp.android.ui.component.compose.ExhibitComposeActivity
 import com.gargantua7.cams.gp.android.ui.component.compose.basicDialog
 import com.gargantua7.cams.gp.android.ui.component.resizable.Resizable
-import com.gargantua7.cams.gp.android.ui.component.swipeable.Swipeable
-import com.gargantua7.cams.gp.android.ui.component.topbar.BackTopBar
 import com.gargantua7.cams.gp.android.ui.search.SearchActivity
 import com.gargantua7.cams.gp.android.ui.util.clearFocusOnKeyboardDismiss
 import com.gargantua7.cams.gp.android.ui.util.toIntuitive
-import com.google.accompanist.swiperefresh.SwipeRefreshState
-import kotlinx.coroutines.launch
 
-class RepairActivity : ComposeActivity(), BackTopBar, BottomBar, Swipeable, Resizable {
+class RepairActivity : ExhibitComposeActivity<Repair>(), BottomBar, Resizable {
+
+    override val id = "Repair"
 
     override val viewModel by lazy { ViewModelProvider(this).get(RepairViewModel::class.java) }
 
@@ -67,55 +61,47 @@ class RepairActivity : ComposeActivity(), BackTopBar, BottomBar, Swipeable, Resi
         }
     }
 
+
     @Composable
-    override fun swipeContent(refreshState: SwipeRefreshState) {
-        refreshState.isRefreshing = viewModel.fresh
-        val repair by viewModel.repair.observeAsState()
+    override fun exhibitContent(item: Repair) {
         val rs by viewModel.replies.observeAsState()
         val replies = rs?.collectAsLazyPagingItems()
-        if (viewModel.fresh) {
-            replies?.refresh()
-            viewModel.fresh = false
-        }
-        repair?.let {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                item {
-                    repairItem(repair = it)
-                }
-                item { Spacer(modifier = Modifier.height(10.dp)) }
-                replies?.let {
-                    items(it) { reply ->
-                        reply?.let { r -> replyItem(r) }
-                    }
-                    if (it.itemCount == 0) {
-                        item {
-                            Text(
-                                text = "No Reply Yet",
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colors.secondary,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
-                } ?: item {
-                    Text(
-                        text = "No Reply Yet",
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colors.secondary,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            item {
+                repairItem(repair = item)
             }
-        } ?: run {
-
+            item { Spacer(modifier = Modifier.height(10.dp)) }
+            replies?.let {
+                items(it) { reply ->
+                    reply?.let { r -> replyItem(r) }
+                }
+                if (it.itemCount == 0) {
+                    item {
+                        Text(
+                            text = "No Reply Yet",
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colors.secondary,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            } ?: item {
+                Text(
+                    text = "No Reply Yet",
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colors.secondary,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 
-    override fun onRefresh() {
-        viewModel.fresh = true
+    @Composable
+    override fun onItemRefresh() {
+        viewModel.id.value = viewModel.id.value
     }
 
     @Composable
@@ -139,7 +125,7 @@ class RepairActivity : ComposeActivity(), BackTopBar, BottomBar, Swipeable, Resi
                     .clearFocusOnKeyboardDismiss()
             )
             IconButton(
-                onClick = { viewModel.sendRepair() },
+                onClick = { viewModel.sendReply() },
                 enabled = viewModel.editor.isNotBlank()
             ) {
                 Icon(
@@ -271,7 +257,7 @@ class RepairActivity : ComposeActivity(), BackTopBar, BottomBar, Swipeable, Resi
                         ) {
                             viewModel.showDialog {
                                 basicDialog(
-                                    title = "Change State to ${if (viewModel.repair.value?.state == true) "CLOSE" else "OPEN"}",
+                                    title = "Change State to ${if (viewModel.item.value?.state == true) "CLOSE" else "OPEN"}",
                                     confirmOnClick = { viewModel.changeState() }
                                 )
                             }
@@ -367,63 +353,6 @@ class RepairActivity : ComposeActivity(), BackTopBar, BottomBar, Swipeable, Resi
             Spacer(modifier = Modifier.width(5.dp))
             personInfo(person = principal)
         }
-    }
-
-    @Composable
-    fun errorPage() {
-        val vm = viewModel(RepairViewModel::class.java)
-        val scope = rememberCoroutineScope()
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            if (vm.loading) {
-                CircularProgressIndicator()
-            } else if (vm.networkError) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickable(
-                            interactionSource = MutableInteractionSource(),
-                            indication = null,
-                            onClick = {
-                                scope.launch {
-                                    vm.id.value?.let { vm.getRepair(it) }
-                                }
-                            })
-                ) {
-                    Icon(
-                        Icons.Filled.WifiOff,
-                        "NetworkError",
-                        modifier = Modifier.size(48.dp),
-                        tint = MaterialTheme.colors.onSurface
-                    )
-                    Spacer(modifier = Modifier.size(10.dp))
-                    Text(
-                        text = stringResource(R.string.network_error),
-                        color = MaterialTheme.colors.onSurface
-                    )
-                    Text(
-                        text = stringResource(R.string.press_retry),
-                        color = MaterialTheme.colors.onSurface
-                    )
-                    Spacer(modifier = Modifier.size(48.dp))
-                }
-            }
-        }
-    }
-
-    @Composable
-    override fun RowScope.coreComponents() {
-        Text(
-            text = "Repair",
-            fontSize = 24.sp,
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            color = Color.White
-        )
     }
 
     @Composable
