@@ -13,4 +13,6 @@ object EventRepository {
     suspend fun getEventsList(page: Int) = fire { eventService.getEventsList(page).get() }
 
     suspend fun getEvent(id: Long) = fire { eventService.getEvent(id).get() }
+
+    suspend fun signEvent(id: Long) = fire { eventService.signEvent(id).get() }
 }

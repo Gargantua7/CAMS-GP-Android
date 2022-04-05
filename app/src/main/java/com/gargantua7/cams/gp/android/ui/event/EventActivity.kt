@@ -116,6 +116,8 @@ class EventActivity : ExhibitComposeActivity<Event>(), BottomBar {
                     onClick = {
                         if (CAMSApplication.session.value == null)
                             startActivityWithMsgResult(Intent(this@EventActivity, SignInActivity::class.java))
+                        else
+                            viewModel.signEvent()
                     }
                 ) {
                     val (icon, text) = when {

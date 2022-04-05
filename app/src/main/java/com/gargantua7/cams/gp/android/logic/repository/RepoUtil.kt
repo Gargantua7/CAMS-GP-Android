@@ -1,5 +1,6 @@
 package com.gargantua7.cams.gp.android.logic.repository
 
+import android.util.Log
 import java.net.UnknownHostException
 
 /**
@@ -11,6 +12,7 @@ suspend fun <T> fire(action: suspend () -> Result<T>): Result<T> {
     } catch (e: UnknownHostException) {
         Result.failure(e)
     } catch (t: Throwable) {
+        Log.d("Network Fire", t.message.toString())
         Result.failure(t)
     }
 }
