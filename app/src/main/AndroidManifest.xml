@@ -13,9 +13,14 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true">
         <activity
-                android:name=".ui.event.EventActivity"
+                android:name=".ui.event.NewEventActivity"
+                android:exported="true"
                 android:theme="@style/Theme.CAMSGPAndroid.NoActionBar"
-                android:exported="true"/>
+                android:windowSoftInputMode="stateVisible|adjustResize"/>
+        <activity
+                android:name=".ui.event.EventActivity"
+                android:exported="true"
+                android:theme="@style/Theme.CAMSGPAndroid.NoActionBar"/>
         <activity
                 android:name=".ui.repair.NewRepairActivity"
                 android:exported="true"

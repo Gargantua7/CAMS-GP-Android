@@ -66,7 +66,7 @@ class EventActivity : ExhibitComposeActivity<Event>(), BottomBar {
             Divider()
             IconRow(icon = Icons.Filled.Groups, hint = "Number", text = item.number.toString())
             IconRow(icon = Icons.Filled.Place, hint = "Local", text = item.location)
-            IconRow(icon = Icons.Filled.EventNote, hint = "Event Time", text = item.eventTime.format())
+            IconRow(icon = Icons.Filled.DateRange, hint = "Event Time", text = item.eventTime.format())
             IconRow(
                 icon = Icons.Filled.Alarm, hint = "Sign Time",
                 text = "${item.startTime.format()} - ${item.endTime.format()}"
