@@ -2,34 +2,39 @@ package com.gargantua7.cams.gp.android.ui.event
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
+import com.gargantua7.cams.gp.android.ui.component.compose.IconRow
 import com.gargantua7.cams.gp.android.ui.component.compose.IconTextField
 import com.gargantua7.cams.gp.android.ui.component.resizable.Resizable
 import com.gargantua7.cams.gp.android.ui.component.topbar.BackTopBar
+import com.gargantua7.cams.gp.android.ui.component.topbar.SendTopBar
+import com.gargantua7.cams.gp.android.ui.util.clearFocusOnKeyboardDismiss
 import com.gargantua7.cams.gp.android.ui.util.format
 import kotlinx.coroutines.CoroutineScope
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class NewEventActivity : ComposeActivity(), BackTopBar, Resizable {
+class NewEventActivity : ComposeActivity(), BackTopBar, SendTopBar, Resizable {
 
     private val title = "Create Event"
     override val viewModel by lazy { ViewModelProvider(this).get(NewEventViewModel::class.java) }
@@ -37,6 +42,10 @@ class NewEventActivity : ComposeActivity(), BackTopBar, Resizable {
 
     @Composable
     override fun contentComponents(scaffoldState: ScaffoldState, scope: CoroutineScope) {
+        if (viewModel.success) {
+            setResult(RESULT_OK, Intent().putExtra("msg", "Event Created Successfully"))
+            finish()
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -47,7 +56,8 @@ class NewEventActivity : ComposeActivity(), BackTopBar, Resizable {
                 value = viewModel.name,
                 onValueChange = { viewModel.name = it },
                 label = "Title",
-                icon = Icons.Filled.Event
+                icon = Icons.Filled.Event,
+                maxWords = 20
             )
             IconTextField(
                 value = viewModel.location,
@@ -106,9 +116,35 @@ class NewEventActivity : ComposeActivity(), BackTopBar, Resizable {
                     }.show()
                 }
             )
+            Divider()
+            IconRow(icon = Icons.Filled.Info, text = "Description")
+            TextField(
+                value = viewModel.content,
+                onValueChange = { viewModel.content = it },
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledTextColor = MaterialTheme.colors.onSurface,
+                    disabledIndicatorColor = Color.Transparent
+                ),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .clearFocusOnKeyboardDismiss()
+            )
+
         }
 
     }
+
+    override fun onSend() {
+        viewModel.createNewEvent()
+    }
+
 
     @Composable
     override fun RowScope.coreComponents() {

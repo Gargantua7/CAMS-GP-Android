@@ -9,11 +9,13 @@ import java.time.format.DateTimeFormatter
  */
 fun LocalDateTime.format(): String = format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss"))
 
+fun LocalDateTime.networkFormat(): String = format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))
+
 fun String.toLocalDateTime(): LocalDateTime =
     LocalDateTime.parse("$this +08", DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss X"))
 
 fun LocalDateTime.toIntuitive(): String {
-    return when(val duration = Duration.between(this, LocalDateTime.now()).toMinutes()) {
+    return when (val duration = Duration.between(this, LocalDateTime.now()).toMinutes()) {
         0L -> "Just Now"
         in 1L..59L -> "$duration Minutes Ago"
         in 60L..1439L -> (duration / 60).toString() + " Hours Ago"

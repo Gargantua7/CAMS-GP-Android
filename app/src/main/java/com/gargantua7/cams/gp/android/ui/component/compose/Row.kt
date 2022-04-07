@@ -82,13 +82,15 @@ fun IconTextField(
     label: String,
     icon: ImageVector,
     maxLines: Int = 1,
+    maxWords: Int = -1,
     onClick: (() -> Unit)? = null,
 ) {
     TextField(
         value = value,
         onValueChange = onValueChange,
         label = {
-            Text(text = label, color = MaterialTheme.colors.secondary)
+            if (maxWords < 0 || value.length <= maxWords)
+                Text(text = label, color = MaterialTheme.colors.secondary)
         },
         leadingIcon = {
             Icon(
@@ -96,6 +98,15 @@ fun IconTextField(
                 tint = MaterialTheme.colors.onSurface,
                 modifier = Modifier.padding(5.dp, 0.dp, 0.dp, 0.dp)
             )
+        },
+        trailingIcon = {
+            if (maxWords >= 0 && value.isNotEmpty()) {
+                Text(
+                    text = "${value.length}/$maxWords",
+                    color = if (value.length <= maxWords) MaterialTheme.colors.secondary else Color.Red,
+                    modifier = Modifier.padding(0.dp, 0.dp, 5.dp, 0.dp)
+                )
+            }
         },
         maxLines = maxLines,
         singleLine = maxLines == 1,
