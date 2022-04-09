@@ -19,6 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.gargantua7.cams.gp.android.ui.component.bottombar.BottomBar
 import com.gargantua7.cams.gp.android.ui.component.bottombar.NavBottomBar
+import com.gargantua7.cams.gp.android.ui.component.fab.FAB
 import com.gargantua7.cams.gp.android.ui.component.resizable.Resizable
 import com.gargantua7.cams.gp.android.ui.component.swipeable.Swipeable
 import com.gargantua7.cams.gp.android.ui.component.topbar.TopBar
@@ -77,12 +78,7 @@ abstract class ComposeActivity : AppCompatActivity() {
                             topBar = { if (this is TopBar) topBar() },
                             bottomBar = { if (this is BottomBar) bottomBar() },
                             floatingActionButton = {
-                                if (viewModel is NavBottomBar.NavBottomBarViewModel) {
-                                    val vm = viewModel as NavBottomBar.NavBottomBarViewModel
-                                    if (this is NavBottomBar) {
-                                        vm.bottomBarItems[vm.select].fab()
-                                    }
-                                }
+                                if (this is FAB) fab()
                             },
                             floatingActionButtonPosition = FabPosition.End
                         ) {

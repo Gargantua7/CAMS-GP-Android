@@ -14,11 +14,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import com.gargantua7.cams.gp.android.ui.component.bottombar.NavBottomBar
 import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
+import com.gargantua7.cams.gp.android.ui.component.fab.FAB
 import com.gargantua7.cams.gp.android.ui.component.swipeable.Swipeable
 import com.gargantua7.cams.gp.android.ui.component.topbar.SearchTopBar
 import com.gargantua7.cams.gp.android.ui.search.SearchActivity
 
-class MainActivity : ComposeActivity(), SearchTopBar, NavBottomBar {
+class MainActivity : ComposeActivity(), SearchTopBar, NavBottomBar, FAB {
 
     override val viewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
 
@@ -53,6 +54,14 @@ class MainActivity : ComposeActivity(), SearchTopBar, NavBottomBar {
         viewModel.value = ""
     }
 
+    @Composable
+    override fun fab() {
+        viewModel.bottomBarItems[viewModel.select].fab()
+    }
+
+    override fun fabOnClick(context: ComposeActivity) {
+        viewModel.bottomBarItems[viewModel.select].fabOnClick(context)
+    }
 }
 
 
