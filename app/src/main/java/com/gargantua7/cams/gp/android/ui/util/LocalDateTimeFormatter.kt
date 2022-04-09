@@ -2,6 +2,7 @@ package com.gargantua7.cams.gp.android.ui.util
 
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 /**
@@ -23,3 +24,5 @@ fun LocalDateTime.toIntuitive(): String {
         else -> format()
     }
 }
+
+fun nowForShanghai() = LocalDateTime.now(ZoneId.of("Asia/Shanghai"))

@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.gargantua7.cams.gp.android.logic.model.Event
 import com.gargantua7.cams.gp.android.ui.event.EventActivity
 import com.gargantua7.cams.gp.android.ui.util.format
-import java.time.LocalDateTime
+import com.gargantua7.cams.gp.android.ui.util.nowForShanghai
 
 /**
  * @author Gargantua7
@@ -36,7 +36,7 @@ abstract class EventsPage : ListPage<Event>() {
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     override fun listItem(event: Event) {
-        val live = LocalDateTime.now() in event.startTime..event.endTime
+        val live = nowForShanghai() in event.startTime..event.endTime
         val context = LocalContext.current
         Card(
             modifier = Modifier
@@ -90,8 +90,8 @@ abstract class EventsPage : ListPage<Event>() {
                         ) {
                             Text(
                                 text = when {
-                                    LocalDateTime.now() < event.startTime -> "WAITING"
-                                    LocalDateTime.now() in event.startTime..event.eventTime -> "SIGNING"
+                                    nowForShanghai() < event.startTime -> "WAITING"
+                                    nowForShanghai() in event.startTime..event.endTime -> "SIGNING"
                                     else -> "ENDING"
                                 },
                                 fontSize = 12.sp,

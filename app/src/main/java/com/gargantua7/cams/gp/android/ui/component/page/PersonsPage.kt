@@ -1,5 +1,6 @@
 package com.gargantua7.cams.gp.android.ui.component.page
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -78,5 +79,9 @@ abstract class PersonsPage : ListPage<Person>() {
                 )
             }
         }
+    }
+
+    override fun itemOnClick(item: Person, context: Context) {
+
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Celebration
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -33,8 +34,8 @@ object Events : EventsPage(), NavPage {
 
     @Composable
     override fun fab() {
-        val user = CAMSApplication.user.observeAsState()
-        if ((user.value?.permission ?: -1) >= 4) {
+        val user by CAMSApplication.user.observeAsState()
+        if ((user?.permission ?: -1) >= 4) {
             fab(icons = Icons.Filled.Add)
         }
     }

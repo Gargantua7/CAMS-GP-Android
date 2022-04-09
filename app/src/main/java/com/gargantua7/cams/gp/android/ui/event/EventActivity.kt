@@ -23,14 +23,17 @@ import androidx.lifecycle.ViewModelProvider
 import com.gargantua7.cams.gp.android.CAMSApplication
 import com.gargantua7.cams.gp.android.logic.model.Event
 import com.gargantua7.cams.gp.android.ui.component.bottombar.BottomBar
+import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
 import com.gargantua7.cams.gp.android.ui.component.compose.ExhibitComposeActivity
 import com.gargantua7.cams.gp.android.ui.component.compose.IconRow
+import com.gargantua7.cams.gp.android.ui.component.fab.FAB
 import com.gargantua7.cams.gp.android.ui.person.SignInActivity
 import com.gargantua7.cams.gp.android.ui.util.format
+import com.gargantua7.cams.gp.android.ui.util.nowForShanghai
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-class EventActivity : ExhibitComposeActivity<Event>(), BottomBar {
+class EventActivity : ExhibitComposeActivity<Event>(), BottomBar, FAB {
 
     override val id = "Event"
 
@@ -79,6 +82,24 @@ class EventActivity : ExhibitComposeActivity<Event>(), BottomBar {
                     .padding(15.dp, 0.dp)
             )
         }
+    }
+
+    @Composable
+    override fun fab() {
+        val user by CAMSApplication.user.observeAsState()
+        val event by viewModel.item.observeAsState()
+        if ((user?.permission ?: -1) >= 4) {
+            event?.let {
+                if (it.startTime <= nowForShanghai())
+                    fab(icons = Icons.Filled.PlaylistAddCheck)
+            }
+        }
+    }
+
+    override fun fabOnClick(context: ComposeActivity) {
+        startActivity(Intent(this, EventRegisteredActivity::class.java).apply {
+            putExtra("id", viewModel.id.value)
+        })
     }
 
     @Composable

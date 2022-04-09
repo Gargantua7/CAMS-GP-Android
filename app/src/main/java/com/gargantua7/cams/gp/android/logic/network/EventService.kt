@@ -1,10 +1,7 @@
 package com.gargantua7.cams.gp.android.logic.network
 
 import com.gargantua7.cams.gp.android.CAMSApplication
-import com.gargantua7.cams.gp.android.logic.model.Event
-import com.gargantua7.cams.gp.android.logic.model.NetworkResponse
-import com.gargantua7.cams.gp.android.logic.model.NewEvent
-import com.gargantua7.cams.gp.android.logic.model.NoResultResponse
+import com.gargantua7.cams.gp.android.logic.model.*
 import retrofit2.http.*
 
 /**
@@ -29,4 +26,11 @@ interface EventService {
         @Body event: NewEvent,
         @Header("session") session: String? = CAMSApplication.session.value
     ): NoResultResponse
+
+    @GET("event/{id}/list/{page}")
+    suspend fun getSignPersonList(
+        @Path("id") id: Long,
+        @Path("page") page: Int,
+        @Header("session") session: String? = CAMSApplication.session.value
+    ): NetworkResponse<List<Person>>
 }
