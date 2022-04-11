@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 /**
  * @author Gargantua7
  */
-object Me : NavPage {
+class Me : NavPage {
 
     override val id: String = "Me"
     override val title = stringResource(R.string.me)

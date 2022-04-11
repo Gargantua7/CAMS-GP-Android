@@ -33,7 +33,7 @@ class EventRegisteredActivity : ComposeActivity(), BackTopBar {
 
     @Composable
     override fun contentComponents(scaffoldState: ScaffoldState, scope: CoroutineScope) {
-        EventRegisteredPersonsPage.draw()
+        EventRegisteredPersonsPage(viewModel).draw()
     }
 
     @Composable

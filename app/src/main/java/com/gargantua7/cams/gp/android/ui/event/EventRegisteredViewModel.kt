@@ -7,14 +7,15 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
+import com.gargantua7.cams.gp.android.logic.model.Person
 import com.gargantua7.cams.gp.android.logic.paging.EventSignedPagingSource
-import com.gargantua7.cams.gp.android.ui.component.compose.ComposeViewModel
+import com.gargantua7.cams.gp.android.ui.component.page.ListPage
 import kotlinx.coroutines.Dispatchers
 
 /**
  * @author Gargantua7
  */
-class EventRegisteredViewModel : ComposeViewModel() {
+class EventRegisteredViewModel : ListPage.ListPageViewModel<Person>() {
 
     val id = MutableLiveData<Long>()
 

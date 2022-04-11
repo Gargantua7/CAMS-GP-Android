@@ -24,7 +24,7 @@ import com.gargantua7.cams.gp.android.ui.util.nowForShanghai
 /**
  * @author Gargantua7
  */
-abstract class EventsPage : ListPage<Event>() {
+abstract class EventsPage(viewModel: ListPageViewModel<Event>) : ListPage<Event>(viewModel) {
 
     override fun itemOnClick(event: Event, context: Context) {
         Intent(context, EventActivity::class.java).let {

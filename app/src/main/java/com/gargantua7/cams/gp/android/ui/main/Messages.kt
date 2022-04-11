@@ -15,7 +15,7 @@ import com.gargantua7.cams.gp.android.ui.util.stringResource
 /**
  * @author Gargantua7
  */
-object Messages : NavPage {
+class Messages : NavPage {
 
     override val id: String = "Message"
     override val title = stringResource(R.string.message)

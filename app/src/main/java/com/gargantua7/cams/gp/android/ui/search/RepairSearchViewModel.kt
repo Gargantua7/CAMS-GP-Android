@@ -1,10 +1,10 @@
 package com.gargantua7.cams.gp.android.ui.search
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
@@ -12,16 +12,15 @@ import com.gargantua7.cams.gp.android.logic.model.Repair
 import com.gargantua7.cams.gp.android.logic.model.RepairSearcher
 import com.gargantua7.cams.gp.android.logic.paging.RepairPagingSource
 import com.gargantua7.cams.gp.android.logic.repository.RepairRepository
+import com.gargantua7.cams.gp.android.ui.component.page.ListPage
 import kotlinx.coroutines.Dispatchers
 
 /**
  * @author Gargantua7
  */
-class RepairSearchViewModel : ViewModel(), SearchComponent.SearchComponentViewModel<Repair> {
+class RepairSearchViewModel : ListPage.ListPageViewModel<Repair>(), SearchComponent.SearchComponentViewModel<Repair> {
 
     override val searcher = MutableLiveData<RepairSearcher>()
-
-    override var loading by mutableStateOf(false)
 
     override val items = Transformations.switchMap(searcher) {
         Log.d("RepairSearch-VM", "Refresh Repairs -> $it")

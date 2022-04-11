@@ -24,7 +24,7 @@ import com.gargantua7.cams.gp.android.ui.util.toIntuitive
 /**
  * @author Gargantua7
  */
-abstract class RepairsPage : ListPage<Repair>() {
+abstract class RepairsPage(viewModel: ListPageViewModel<Repair>) : ListPage<Repair>(viewModel) {
 
     override fun itemOnClick(repair: Repair, context: Context) {
         Intent(context, RepairActivity::class.java).let {

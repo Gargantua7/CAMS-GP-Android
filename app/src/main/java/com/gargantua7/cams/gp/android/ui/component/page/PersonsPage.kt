@@ -19,7 +19,7 @@ import com.gargantua7.cams.gp.android.logic.model.Person
 /**
  * @author Gargantua7
  */
-abstract class PersonsPage : ListPage<Person>() {
+abstract class PersonsPage(viewModel: ListPageViewModel<Person>) : ListPage<Person>(viewModel) {
 
     @OptIn(ExperimentalMaterialApi::class)
     @Composable

@@ -5,20 +5,23 @@ import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.PagingData
 import com.gargantua7.cams.gp.android.logic.model.Repair
 import com.gargantua7.cams.gp.android.ui.component.page.RepairsPage
 import com.gargantua7.cams.gp.android.ui.repair.RepairActivity
+import kotlinx.coroutines.flow.Flow
 
 /**
  * @author Gargantua7
  */
-class RepairSearch(override val viewModel: RepairSearchViewModel) : RepairsPage(), SearchComponent<Repair> {
+class RepairSearch(override val viewModel: RepairSearchViewModel) : RepairsPage(viewModel), SearchComponent<Repair> {
 
     override val id: String = "RepairSearch"
     override val title = "RepairSearch"
     override val element = "Repair"
     override val mode = SearchViewModel.REPAIR_FULL_MODE
+
+    override lateinit var lazyItems: Flow<PagingData<Repair>>
 
     override fun itemOnClick(repair: Repair, context: Context) {
         if (context is SearchActivity) {
@@ -39,7 +42,7 @@ class RepairSearch(override val viewModel: RepairSearchViewModel) : RepairsPage(
     override fun draw() {
         val items by viewModel.items.observeAsState()
         items?.let {
-            this.items = it.collectAsLazyPagingItems()
+            lazyItems = it
             swipe()
         }
     }

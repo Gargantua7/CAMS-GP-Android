@@ -14,7 +14,7 @@ class MainViewModel : ComposeViewModel(), SearchTopBar.SearchTopBarViewModel, Na
 
     override var select by mutableStateOf(0)
 
-    override val bottomBarItems = arrayOf(Repairs, Events, Messages, Me)
+    override val bottomBarItems = arrayOf(Repairs(RepairViewModel()), Events(EventViewModel()), Messages(), Me())
 
     override var value by mutableStateOf("")
 }
