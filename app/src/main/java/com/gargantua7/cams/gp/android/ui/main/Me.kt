@@ -28,6 +28,7 @@ import com.gargantua7.cams.gp.android.logic.repository.PersonRepository
 import com.gargantua7.cams.gp.android.logic.repository.SecretRepository
 import com.gargantua7.cams.gp.android.ui.component.compose.basicDialog
 import com.gargantua7.cams.gp.android.ui.component.page.NavPage
+import com.gargantua7.cams.gp.android.ui.person.PersonActivity
 import com.gargantua7.cams.gp.android.ui.person.SignInActivity
 import com.gargantua7.cams.gp.android.ui.util.stringResource
 import kotlinx.coroutines.launch
@@ -56,6 +57,10 @@ class Me : NavPage {
                             modifier = Modifier
                                 .background(MaterialTheme.colors.surface)
                                 .clickable {
+                                    Intent(context, PersonActivity::class.java).apply {
+                                        putExtra("id", it.username)
+                                        context.startActivity(this)
+                                    }
                                 }
                         ) {
                             Column(

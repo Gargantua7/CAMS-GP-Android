@@ -13,6 +13,10 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true">
         <activity
+                android:name=".ui.person.PersonActivity"
+                android:exported="true"
+                android:theme="@style/Theme.CAMSGPAndroid.NoActionBar"/>
+        <activity
                 android:name=".ui.event.EventRegisteredActivity"
                 android:exported="true"
                 android:theme="@style/Theme.CAMSGPAndroid.NoActionBar"/>

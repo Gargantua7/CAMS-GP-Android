@@ -1,6 +1,7 @@
 package com.gargantua7.cams.gp.android.ui.component.page
 
 import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gargantua7.cams.gp.android.logic.model.Person
+import com.gargantua7.cams.gp.android.ui.person.PersonActivity
 
 /**
  * @author Gargantua7
@@ -82,6 +84,9 @@ abstract class PersonsPage(viewModel: ListPageViewModel<Person>) : ListPage<Pers
     }
 
     override fun itemOnClick(item: Person, context: Context) {
-
+        Intent(context, PersonActivity::class.java).apply {
+            putExtra("id", item.username)
+            context.startActivity(this)
+        }
     }
 }

@@ -34,6 +34,7 @@ import com.gargantua7.cams.gp.android.ui.component.bottombar.BottomBar
 import com.gargantua7.cams.gp.android.ui.component.compose.ExhibitComposeActivity
 import com.gargantua7.cams.gp.android.ui.component.compose.basicDialog
 import com.gargantua7.cams.gp.android.ui.component.resizable.Resizable
+import com.gargantua7.cams.gp.android.ui.person.PersonActivity
 import com.gargantua7.cams.gp.android.ui.search.SearchActivity
 import com.gargantua7.cams.gp.android.ui.util.clearFocusOnKeyboardDismiss
 import com.gargantua7.cams.gp.android.ui.util.toIntuitive
@@ -357,11 +358,15 @@ class RepairActivity : ExhibitComposeActivity<Repair>(), BottomBar, Resizable {
 
     @Composable
     fun personInfo(person: Person, nameSize: Int = 12) {
+        val context = LocalContext.current
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.clickable(interactionSource = MutableInteractionSource(), indication = null) {
-
+                Intent(context, PersonActivity::class.java).apply {
+                    putExtra("id", person.username)
+                    context.startActivity(this)
+                }
             }
         ) {
             Text(

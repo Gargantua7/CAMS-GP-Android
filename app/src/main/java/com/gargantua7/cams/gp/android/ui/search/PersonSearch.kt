@@ -26,7 +26,7 @@ class PersonSearch(override val viewModel: PersonSearchViewModel) : PersonsPage(
             if (context.viewModel.picker) {
                 context.viewModel.picked = person.username to person.name
             } else {
-                /** TODO **/
+                super.itemOnClick(person, context)
             }
         }
     }
