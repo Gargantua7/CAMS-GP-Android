@@ -1,4 +1,4 @@
-package com.gargantua7.cams.gp.android.ui.person
+package com.gargantua7.cams.gp.android.ui.secret
 
 import android.util.Log
 import androidx.compose.runtime.getValue

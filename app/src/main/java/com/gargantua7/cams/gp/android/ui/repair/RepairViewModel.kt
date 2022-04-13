@@ -17,7 +17,7 @@ import com.gargantua7.cams.gp.android.logic.paging.ReplyPagingSource
 import com.gargantua7.cams.gp.android.logic.repository.RepairRepository
 import com.gargantua7.cams.gp.android.logic.repository.ReplyRepository
 import com.gargantua7.cams.gp.android.ui.component.compose.ExhibitComposeViewModel
-import com.gargantua7.cams.gp.android.ui.person.SignInActivity
+import com.gargantua7.cams.gp.android.ui.secret.SignInActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

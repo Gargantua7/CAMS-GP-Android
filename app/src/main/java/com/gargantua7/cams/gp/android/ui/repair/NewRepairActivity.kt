@@ -20,7 +20,7 @@ import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
 import com.gargantua7.cams.gp.android.ui.component.resizable.Resizable
 import com.gargantua7.cams.gp.android.ui.component.topbar.BackTopBar
 import com.gargantua7.cams.gp.android.ui.component.topbar.SendTopBar
-import com.gargantua7.cams.gp.android.ui.person.SignInActivity
+import com.gargantua7.cams.gp.android.ui.secret.SignInActivity
 import kotlinx.coroutines.CoroutineScope
 
 class NewRepairActivity : ComposeActivity(), BackTopBar, SendTopBar, Resizable {

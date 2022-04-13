@@ -27,7 +27,7 @@ import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
 import com.gargantua7.cams.gp.android.ui.component.compose.ExhibitComposeActivity
 import com.gargantua7.cams.gp.android.ui.component.compose.IconRow
 import com.gargantua7.cams.gp.android.ui.component.fab.FAB
-import com.gargantua7.cams.gp.android.ui.person.SignInActivity
+import com.gargantua7.cams.gp.android.ui.secret.SignInActivity
 import com.gargantua7.cams.gp.android.ui.util.format
 import com.gargantua7.cams.gp.android.ui.util.nowForShanghai
 import java.time.LocalDateTime

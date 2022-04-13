@@ -1,10 +1,9 @@
-package com.gargantua7.cams.gp.android.ui.person
+package com.gargantua7.cams.gp.android.ui.secret
 
 import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -20,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
+import com.gargantua7.cams.gp.android.ui.component.compose.BoxTextField
 import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
 import com.gargantua7.cams.gp.android.ui.component.topbar.BackTopBar
 import kotlinx.coroutines.CoroutineScope
@@ -44,12 +44,10 @@ class SignInActivity : ComposeActivity(), BackTopBar {
         Column(
             modifier = Modifier.padding(10.dp, 5.dp)
         ) {
-            textField(
+            BoxTextField(
                 text = viewModel.username,
                 placeholder = "Username",
-                leadIcon = {
-                    Icon(imageVector = Icons.Filled.AccountBox, contentDescription = "Username")
-                },
+                leadIcon = Icons.Filled.AccountBox,
                 trailingIcon = {
                     if (viewModel.username.isNotEmpty()) {
                         IconButton(
@@ -68,11 +66,10 @@ class SignInActivity : ComposeActivity(), BackTopBar {
                     viewModel.username = it
                 }
             )
-            textField(text = viewModel.password,
+            BoxTextField(
+                text = viewModel.password,
                 placeholder = "Password",
-                leadIcon = {
-                    Icon(imageVector = Icons.Filled.Password, contentDescription = "Password")
-                },
+                leadIcon = Icons.Filled.Password,
                 trailingIcon = {
                     if (viewModel.password.isNotEmpty()) {
                         if (viewModel.passwordVisibility) {
@@ -119,41 +116,6 @@ class SignInActivity : ComposeActivity(), BackTopBar {
         }
     }
 
-    @Composable
-    fun textField(
-        text: String,
-        placeholder: String,
-        leadIcon: @Composable () -> Unit,
-        trailingIcon: @Composable () -> Unit,
-        keyboardType: KeyboardType,
-        imeAction: ImeAction,
-        keyboardActions: KeyboardActions = KeyboardActions(),
-        visualTransformation: VisualTransformation = VisualTransformation.None,
-        onValueChange: (String) -> Unit
-    ) {
-        TextField(
-            value = text,
-            placeholder = { Text(text = placeholder) },
-            leadingIcon = { leadIcon() },
-            trailingIcon = { trailingIcon() },
-            singleLine = true,
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = MaterialTheme.colors.surface
-            ),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = keyboardType,
-                imeAction = imeAction
-            ),
-            keyboardActions = keyboardActions,
-            shape = RoundedCornerShape(5.dp),
-            visualTransformation = visualTransformation,
-            onValueChange = { onValueChange(it) },
-            readOnly = viewModel.loading,
-            modifier = Modifier
-                .padding(0.dp, 5.dp)
-                .fillMaxWidth()
-        )
-    }
 
     @Composable
     fun button() {
@@ -177,6 +139,24 @@ class SignInActivity : ComposeActivity(), BackTopBar {
             Icon(imageVector = Icons.Filled.Login, contentDescription = "Login")
             Spacer(modifier = Modifier.width(10.dp))
             Text(text = "Login")
+            Spacer(modifier = Modifier.weight(1f))
+        }
+        Button(
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colors.surface,
+                contentColor = MaterialTheme.colors.onSurface
+            ),
+            shape = RoundedCornerShape(5.dp),
+            modifier = Modifier.padding(0.dp, 5.dp),
+            contentPadding = PaddingValues(10.dp),
+            onClick = {
+                startActivity(Intent(this, SignUpActivity::class.java))
+            }
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(imageVector = Icons.Filled.PersonAdd, contentDescription = "Register")
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(text = "Register")
             Spacer(modifier = Modifier.weight(1f))
         }
     }

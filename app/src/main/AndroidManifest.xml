@@ -13,6 +13,11 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true">
         <activity
+                android:name=".ui.secret.SignUpActivity"
+                android:exported="true"
+                android:theme="@style/Theme.CAMSGPAndroid.NoActionBar"
+                android:windowSoftInputMode="stateVisible|adjustResize"/>
+        <activity
                 android:name=".ui.person.PersonActivity"
                 android:exported="true"
                 android:theme="@style/Theme.CAMSGPAndroid.NoActionBar"/>
@@ -44,7 +49,7 @@
                 android:theme="@style/Theme.CAMSGPAndroid.NoActionBar"
                 android:windowSoftInputMode="stateVisible|adjustResize"/>
         <activity
-                android:name=".ui.person.SignInActivity"
+                android:name=".ui.secret.SignInActivity"
                 android:exported="true"
                 android:theme="@style/Theme.CAMSGPAndroid.NoActionBar"/>
         <activity
