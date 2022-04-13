@@ -6,7 +6,7 @@ import java.util.*
  * @author Gargantua7
  */
 fun matchPassword(password: String) =
-    "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9~!@#\$%^&*]{8,16}\$".toRegex().matches(password)
+    "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9~!@#\$%^&*]{8,16}\$".toRegex().matches(password)
 
 fun matchUsername(username: String): Boolean {
     if (!"^[0-9]{12}\$".toRegex().matches(username)) return false

@@ -150,7 +150,7 @@ class SignInActivity : ComposeActivity(), BackTopBar {
             modifier = Modifier.padding(0.dp, 5.dp),
             contentPadding = PaddingValues(10.dp),
             onClick = {
-                startActivity(Intent(this, SignUpActivity::class.java))
+                startActivityWithMsgResult(Intent(this, SignUpActivity::class.java))
             }
         ) {
             Spacer(modifier = Modifier.weight(1f))

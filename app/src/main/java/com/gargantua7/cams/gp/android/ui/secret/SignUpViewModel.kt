@@ -5,11 +5,15 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.gargantua7.cams.gp.android.logic.exception.BadRequestException
+import com.gargantua7.cams.gp.android.logic.exception.ForbiddenException
 import com.gargantua7.cams.gp.android.logic.exception.NotFoundException
 import com.gargantua7.cams.gp.android.logic.model.Collage
 import com.gargantua7.cams.gp.android.logic.model.Major
+import com.gargantua7.cams.gp.android.logic.model.SignUp
 import com.gargantua7.cams.gp.android.logic.repository.PersonRepository
 import com.gargantua7.cams.gp.android.logic.repository.ResourceRepository
+import com.gargantua7.cams.gp.android.logic.repository.SecretRepository
 import com.gargantua7.cams.gp.android.ui.component.compose.ComposeViewModel
 import com.gargantua7.cams.gp.android.ui.util.matchUsername
 import kotlinx.coroutines.launch
@@ -45,6 +49,8 @@ class SignUpViewModel : ComposeViewModel() {
 
     var wechat by mutableStateOf("")
 
+    var success by mutableStateOf(false)
+
     fun checkUsernameAvailable() {
         if (matchUsername(username)) {
             usernameAvailable = availableMap[username]
@@ -78,6 +84,25 @@ class SignUpViewModel : ComposeViewModel() {
                 if (res.isSuccess) {
                     majorMap[it] = res.getOrThrow().toSet()
                 } else showSnackBar("Network Error")
+            }
+        }
+    }
+
+    fun signUp() {
+        viewModelScope.launch {
+            val model =
+                SignUp(username, password, name, sex!!, major!!.id, phone.ifEmpty { null }, wechat.ifEmpty { null })
+            val res = SecretRepository.signUp(model)
+            if (res.isSuccess) {
+                success = true
+            } else {
+                showSnackBar(
+                    when (res.exceptionOrNull()) {
+                        is BadRequestException -> "Invalid Parameter"
+                        is ForbiddenException -> "Username already exists"
+                        else -> "Network Error"
+                    }
+                )
             }
         }
     }

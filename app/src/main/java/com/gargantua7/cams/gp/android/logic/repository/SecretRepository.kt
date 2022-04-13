@@ -3,6 +3,7 @@ package com.gargantua7.cams.gp.android.logic.repository
 import com.gargantua7.cams.gp.android.CAMSApplication
 import com.gargantua7.cams.gp.android.logic.dao.SecretDao
 import com.gargantua7.cams.gp.android.logic.model.Secret
+import com.gargantua7.cams.gp.android.logic.model.SignUp
 import com.gargantua7.cams.gp.android.logic.network.NetworkServiceCreator
 import com.gargantua7.cams.gp.android.logic.network.SecretService
 
@@ -14,6 +15,8 @@ object SecretRepository {
     private val secretService = NetworkServiceCreator.create(SecretService::class.java)
 
     suspend fun signIn(secret: Secret) = fire { secretService.signIn(secret).get() }
+
+    suspend fun signUp(signUp: SignUp) = fire { secretService.signUp(signUp).get() }
 
     suspend fun signOut() = fire { secretService.signOut().get() }
 

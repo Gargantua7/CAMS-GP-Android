@@ -1,5 +1,6 @@
 package com.gargantua7.cams.gp.android.ui.secret
 
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
@@ -15,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
@@ -34,7 +36,21 @@ class SignUpActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar {
     override val viewModel by lazy { ViewModelProvider(this).get(SignUpViewModel::class.java) }
 
     @Composable
+    override fun RowScope.coreComponents() {
+        Text(
+            text = "Register",
+            fontSize = 24.sp,
+            textAlign = TextAlign.Center,
+            color = Color.White
+        )
+    }
+
+    @Composable
     override fun contentComponents(scaffoldState: ScaffoldState, scope: CoroutineScope) {
+        if (viewModel.success) {
+            setResult(RESULT_OK, Intent().putExtra("msg", "Registered successfully"))
+            finish()
+        }
         super.contentComponents(scaffoldState, scope)
         Column(
             Modifier
@@ -285,7 +301,7 @@ class SignUpActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar {
                 modifier = Modifier.padding(10.dp, 0.dp, 10.dp, 5.dp),
                 contentPadding = PaddingValues(10.dp),
                 onClick = {
-
+                    viewModel.signUp()
                 }
             ) {
                 Spacer(modifier = Modifier.weight(1f))
