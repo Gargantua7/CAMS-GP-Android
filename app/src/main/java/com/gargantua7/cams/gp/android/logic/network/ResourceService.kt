@@ -14,6 +14,12 @@ interface ResourceService {
     @GET("res/list/collage")
     suspend fun getCollageList(): NetworkResponse<List<Collage>>
 
+    @GET("res/get/collage/{id}")
+    suspend fun getCollage(@Path("id") id: String): NetworkResponse<Collage>
+
     @GET("res/list/collage/{id}/major")
     suspend fun getCollageMajorList(@Path("id") id: String): NetworkResponse<List<Major>>
+
+    @GET("res/get/major/{id}")
+    suspend fun getMajor(@Path("id") id: String): NetworkResponse<Major>
 }

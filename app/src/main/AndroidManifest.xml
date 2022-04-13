@@ -13,6 +13,11 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true">
         <activity
+                android:name=".ui.person.PersonEditActivity"
+                android:exported="true"
+                android:theme="@style/Theme.CAMSGPAndroid.NoActionBar"
+                android:windowSoftInputMode="stateVisible|adjustResize"/>
+        <activity
                 android:name=".ui.secret.SignUpActivity"
                 android:exported="true"
                 android:theme="@style/Theme.CAMSGPAndroid.NoActionBar"

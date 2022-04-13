@@ -3,6 +3,7 @@ package com.gargantua7.cams.gp.android.logic.repository
 import com.gargantua7.cams.gp.android.CAMSApplication
 import com.gargantua7.cams.gp.android.logic.dao.PersonDao
 import com.gargantua7.cams.gp.android.logic.model.PersonSearcher
+import com.gargantua7.cams.gp.android.logic.model.PersonUpdate
 import com.gargantua7.cams.gp.android.logic.network.NetworkServiceCreator
 import com.gargantua7.cams.gp.android.logic.network.PersonService
 
@@ -35,6 +36,8 @@ object PersonRepository {
             permissionLevel = searcher.permissionLevel
         ).get()
     }
+
+    suspend fun personInfoUpdate(info: PersonUpdate) = fire { personService.updatePerson(info).get() }
 
     suspend fun saveUsername() {
         CAMSApplication.username?.let {

@@ -12,6 +12,10 @@ object ResourceRepository {
 
     suspend fun getCollageList() = fire { service.getCollageList().get() }
 
+    suspend fun getCollage(id: String) = fire { service.getCollage(id).get() }
+
     suspend fun getCollageMajorList(id: String) = fire { service.getCollageMajorList(id).get() }
+
+    suspend fun getMajor(id: String) = fire { service.getMajor(id).get() }
 
 }
