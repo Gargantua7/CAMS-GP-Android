@@ -3,6 +3,7 @@ package com.gargantua7.cams.gp.android.logic.repository
 import com.gargantua7.cams.gp.android.CAMSApplication
 import com.gargantua7.cams.gp.android.logic.dao.SecretDao
 import com.gargantua7.cams.gp.android.logic.model.Secret
+import com.gargantua7.cams.gp.android.logic.model.SecretUpdate
 import com.gargantua7.cams.gp.android.logic.model.SignUp
 import com.gargantua7.cams.gp.android.logic.network.NetworkServiceCreator
 import com.gargantua7.cams.gp.android.logic.network.SecretService
@@ -19,6 +20,8 @@ object SecretRepository {
     suspend fun signUp(signUp: SignUp) = fire { secretService.signUp(signUp).get() }
 
     suspend fun signOut() = fire { secretService.signOut().get() }
+
+    suspend fun updateSecret(secret: SecretUpdate) = fire { secretService.updateSecret(secret).get() }
 
     suspend fun saveSession() {
         CAMSApplication.session.value?.let {
