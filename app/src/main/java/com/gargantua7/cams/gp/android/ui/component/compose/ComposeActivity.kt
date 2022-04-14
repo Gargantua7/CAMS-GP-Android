@@ -20,6 +20,7 @@ import androidx.navigation.compose.composable
 import com.gargantua7.cams.gp.android.ui.component.bottombar.BottomBar
 import com.gargantua7.cams.gp.android.ui.component.bottombar.NavBottomBar
 import com.gargantua7.cams.gp.android.ui.component.fab.FAB
+import com.gargantua7.cams.gp.android.ui.component.photo.PhotoPreview
 import com.gargantua7.cams.gp.android.ui.component.resizable.Resizable
 import com.gargantua7.cams.gp.android.ui.component.swipeable.Swipeable
 import com.gargantua7.cams.gp.android.ui.component.topbar.TopBar
@@ -103,6 +104,13 @@ abstract class ComposeActivity : AppCompatActivity() {
                             }
                             viewModel.dialog?.let {
                                 viewModel.it()
+                            }
+                        }
+                    }
+                    if (this is PhotoPreview) {
+                        viewModel.bitmap?.let {
+                            FullScreenImage(image = it) {
+                                viewModel.bitmap = null
                             }
                         }
                     }

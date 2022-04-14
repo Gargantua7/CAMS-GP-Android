@@ -6,8 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,6 +19,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,13 +34,14 @@ import com.gargantua7.cams.gp.android.logic.model.*
 import com.gargantua7.cams.gp.android.ui.component.bottombar.BottomBar
 import com.gargantua7.cams.gp.android.ui.component.compose.ExhibitComposeActivity
 import com.gargantua7.cams.gp.android.ui.component.compose.basicDialog
+import com.gargantua7.cams.gp.android.ui.component.photo.PhotoPreview
 import com.gargantua7.cams.gp.android.ui.component.resizable.Resizable
 import com.gargantua7.cams.gp.android.ui.person.PersonActivity
 import com.gargantua7.cams.gp.android.ui.search.SearchActivity
 import com.gargantua7.cams.gp.android.ui.util.clearFocusOnKeyboardDismiss
 import com.gargantua7.cams.gp.android.ui.util.toIntuitive
 
-class RepairActivity : ExhibitComposeActivity<Repair>(), BottomBar, Resizable {
+class RepairActivity : ExhibitComposeActivity<Repair>(), BottomBar, Resizable, PhotoPreview {
 
     override val id = "Repair"
 
@@ -171,11 +173,30 @@ class RepairActivity : ExhibitComposeActivity<Repair>(), BottomBar, Resizable {
                 }
             }
             Divider()
+            val content by viewModel.text.observeAsState()
             Text(
-                text = repair.content,
+                text = content ?: "",
                 modifier = Modifier
                     .padding(15.dp, 5.dp)
             )
+            val pics by viewModel.pics.observeAsState()
+            if (!pics.isNullOrEmpty()) {
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()).height(100.dp).padding(15.dp, 5.dp),
+                ) {
+                    pics!!.forEachIndexed { i, pic ->
+                        Image(
+                            pic.asImageBitmap(),
+                            "pic-$i",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.height(100.dp).width(100.dp).clickable {
+                                viewModel.bitmap = pic
+                            }
+                        )
+                        Spacer(Modifier.width(10.dp))
+                    }
+                }
+            }
             Spacer(modifier = Modifier.height(5.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,

@@ -2,7 +2,10 @@ package com.gargantua7.cams.gp.android.ui.component.page
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -13,12 +16,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gargantua7.cams.gp.android.logic.model.Repair
+import com.gargantua7.cams.gp.android.ui.main.MainActivity
 import com.gargantua7.cams.gp.android.ui.repair.RepairActivity
+import com.gargantua7.cams.gp.android.ui.util.decodeImage
 import com.gargantua7.cams.gp.android.ui.util.toIntuitive
 
 /**
@@ -36,7 +43,27 @@ abstract class RepairsPage(viewModel: ListPageViewModel<Repair>) : ListPage<Repa
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     override fun listItem(repair: Repair) {
-        val context = LocalContext.current
+        val context = LocalContext.current as MainActivity
+        val text = repair.let {
+            val i = it.content.indexOf("<img>")
+            if (i > 0)
+                it.content.substring(0, i)
+            else it.content
+        }
+
+        val pics = repair.let {
+            val list = ArrayList<Bitmap>()
+            val res = "<img>([\\s\\S]*)<\\\\img>".toRegex().toPattern().matcher(it.content)
+            if (res.find()) {
+                res.group(1)?.let { s ->
+                    s.split(",").forEach { b ->
+                        list.add(decodeImage(b))
+                        if (list.size == 3) return@forEach
+                    }
+                }
+            }
+            list
+        }
         Card(
             modifier = Modifier
                 .padding(5.dp, 2.5.dp)
@@ -70,14 +97,34 @@ abstract class RepairsPage(viewModel: ListPageViewModel<Repair>) : ListPage<Repa
                             color = MaterialTheme.colors.onBackground
                         )
                     }
-                    Text(
-                        text = repair.content,
-                        fontSize = 15.sp,
-                        color = MaterialTheme.colors.onBackground,
-                        maxLines = 3,
-                        modifier = Modifier.padding(0.dp, 5.dp)
-                    )
+                    if (text.isNotBlank()) {
+                        Text(
+                            text = text,
+                            fontSize = 15.sp,
+                            color = MaterialTheme.colors.onBackground,
+                            maxLines = 3,
+                            modifier = Modifier.padding(0.dp, 5.dp)
+                        )
+                    }
 
+                }
+                if (pics.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier.height(100.dp)
+                    ) {
+                        Spacer(Modifier.weight(1f))
+                        pics.forEachIndexed { i, pic ->
+                            Image(
+                                pic.asImageBitmap(),
+                                "pic-$i",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.height(100.dp).width(100.dp).clickable {
+                                    context.viewModel.bitmap = pic
+                                }
+                            )
+                            Spacer(Modifier.weight(1f))
+                        }
+                    }
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically

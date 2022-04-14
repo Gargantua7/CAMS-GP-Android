@@ -1,6 +1,7 @@
 package com.gargantua7.cams.gp.android.ui.repair
 
 import android.content.Intent
+import android.graphics.Bitmap
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -18,6 +19,7 @@ import com.gargantua7.cams.gp.android.logic.repository.RepairRepository
 import com.gargantua7.cams.gp.android.logic.repository.ReplyRepository
 import com.gargantua7.cams.gp.android.ui.component.compose.ExhibitComposeViewModel
 import com.gargantua7.cams.gp.android.ui.secret.SignInActivity
+import com.gargantua7.cams.gp.android.ui.util.decodeImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -27,6 +29,38 @@ import kotlinx.coroutines.launch
 class RepairViewModel : ExhibitComposeViewModel<Repair, Long>() {
 
     var editor by mutableStateOf("")
+
+    val text = Transformations.switchMap(item) {
+        liveData(Dispatchers.IO) {
+            if (it == null) emit(null)
+            else {
+                val i = it.content.indexOf("<img>")
+                emit(
+                    if (i > 0)
+                        it.content.substring(0, i)
+                    else it.content
+                )
+            }
+        }
+    }
+
+    val pics = Transformations.switchMap(item) {
+        liveData(Dispatchers.IO) {
+            if (it == null) emit(null)
+            else {
+                val list = ArrayList<Bitmap>()
+                val res = "<img>([\\s\\S]*)<\\\\img>".toRegex().toPattern().matcher(it.content)
+                if (res.find()) {
+                    res.group(1)?.let { s ->
+                        s.split(",").forEach { b ->
+                            list.add(decodeImage(b))
+                        }
+                    }
+                }
+                emit(list)
+            }
+        }
+    }
 
     val replies = Transformations.switchMap(id) {
         liveData(Dispatchers.IO) {
