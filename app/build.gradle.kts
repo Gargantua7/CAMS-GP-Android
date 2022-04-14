@@ -56,6 +56,7 @@ android {
 
 val accompanist_version = "0.23.1"
 val paging_version = "3.1.1"
+val roomVersion = "2.4.2"
 
 dependencies {
 
@@ -87,6 +88,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.4.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.4.0")
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    implementation("androidx.room:room-paging:2.5.0-alpha01")
+    //annotationProcessor("androidx.room:room-compiler:$roomVersion")
 
     testImplementation("junit:junit")
     testImplementation("androidx.paging:paging-common:$paging_version")

@@ -10,6 +10,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.liveData
+import androidx.room.Room
+import com.gargantua7.cams.gp.android.logic.dao.MsgDatabase
 import com.gargantua7.cams.gp.android.logic.exception.AuthorizedException
 import com.gargantua7.cams.gp.android.logic.exception.NotFoundException
 import com.gargantua7.cams.gp.android.logic.model.Person
@@ -60,6 +62,17 @@ class CAMSApplication : Application() {
                     loading = false
                     errorMsg?.let { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
                 }
+            }
+        }
+        val msgDB = Transformations.switchMap(session) {
+            liveData(Dispatchers.IO) {
+                if (it == null) emit(null)
+                else emit(
+                    Room.databaseBuilder(
+                        context,
+                        MsgDatabase::class.java, it
+                    ).allowMainThreadQueries().build()
+                )
             }
         }
     }
