@@ -40,7 +40,7 @@ class PersonEditActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar {
     @Composable
     override fun RowScope.coreComponents() {
         Text(
-            text = "Information Editor",
+            text = "Profile Editor",
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
             color = Color.White
