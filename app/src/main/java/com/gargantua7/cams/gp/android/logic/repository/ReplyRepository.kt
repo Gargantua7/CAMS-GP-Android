@@ -19,4 +19,8 @@ object ReplyRepository {
         replyService.sendReplyForRepair(repairId, SendReply(content)).get()
     }
 
+    suspend fun getReplyById(replyId: Long) = fire {
+        replyService.getReplyById(replyId).get()
+    }
+
 }

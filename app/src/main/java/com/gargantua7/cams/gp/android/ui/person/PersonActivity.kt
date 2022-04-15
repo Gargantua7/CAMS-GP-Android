@@ -33,6 +33,7 @@ import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
 import com.gargantua7.cams.gp.android.ui.component.compose.ExhibitComposeActivity
 import com.gargantua7.cams.gp.android.ui.component.compose.IconRow
 import com.gargantua7.cams.gp.android.ui.component.fab.FAB
+import com.gargantua7.cams.gp.android.ui.message.MessageActivity
 import com.gargantua7.cams.gp.android.ui.repair.RepairActivity
 import com.gargantua7.cams.gp.android.ui.util.toIntuitive
 
@@ -110,7 +111,11 @@ class PersonActivity : ExhibitComposeActivity<Person>(), FAB {
     }
 
     override fun fabOnClick(context: ComposeActivity) {
-        // TODO
+        Intent(this, MessageActivity::class.java).let {
+            it.putExtra("id", viewModel.id.value)
+            it.putExtra("op", viewModel.item.value?.name)
+            startActivity(it)
+        }
     }
 
     @Composable

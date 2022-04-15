@@ -20,6 +20,12 @@
         </service>
 
         <activity
+                android:name=".ui.message.MessageActivity"
+                android:exported="true"
+                android:launchMode="singleTask"
+                android:theme="@style/Theme.CAMSGPAndroid.NoActionBar"
+                android:windowSoftInputMode="stateVisible|adjustResize"/>
+        <activity
                 android:name=".ui.secret.SecretUpdateActivity"
                 android:exported="true"
                 android:theme="@style/Theme.CAMSGPAndroid.NoActionBar"
@@ -37,6 +43,7 @@
         <activity
                 android:name=".ui.person.PersonActivity"
                 android:exported="true"
+                android:launchMode="singleTask"
                 android:theme="@style/Theme.CAMSGPAndroid.NoActionBar"/>
         <activity
                 android:name=".ui.event.EventRegisteredActivity"

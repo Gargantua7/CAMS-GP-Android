@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     kotlin("android")
+    kotlin("kapt")
     id("kotlin-android")
 }
 
@@ -92,7 +93,10 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     implementation("androidx.room:room-paging:2.5.0-alpha01")
-    //annotationProcessor("androidx.room:room-compiler:$roomVersion")
+
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
+
+    kapt("androidx.room:room-compiler:$roomVersion")
 
     testImplementation("junit:junit")
     testImplementation("androidx.paging:paging-common:$paging_version")

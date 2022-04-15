@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gargantua7.cams.gp.android.logic.model.Repair
-import com.gargantua7.cams.gp.android.ui.main.MainActivity
+import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
 import com.gargantua7.cams.gp.android.ui.repair.RepairActivity
 import com.gargantua7.cams.gp.android.ui.util.decodeImage
 import com.gargantua7.cams.gp.android.ui.util.toIntuitive
@@ -43,7 +43,7 @@ abstract class RepairsPage(viewModel: ListPageViewModel<Repair>) : ListPage<Repa
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     override fun listItem(repair: Repair) {
-        val context = LocalContext.current as MainActivity
+        val context = LocalContext.current as ComposeActivity
         val text = repair.let {
             val i = it.content.indexOf("<img>")
             if (i > 0)
@@ -118,9 +118,12 @@ abstract class RepairsPage(viewModel: ListPageViewModel<Repair>) : ListPage<Repa
                                 pic.asImageBitmap(),
                                 "pic-$i",
                                 contentScale = ContentScale.Crop,
-                                modifier = Modifier.height(100.dp).width(100.dp).clickable {
-                                    context.viewModel.bitmap = pic
-                                }
+                                modifier = Modifier
+                                    .height(100.dp)
+                                    .width(100.dp)
+                                    .clickable {
+                                        context.viewModel.bitmap = pic
+                                    }
                             )
                             Spacer(Modifier.weight(1f))
                         }

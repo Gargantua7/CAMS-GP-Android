@@ -45,6 +45,7 @@ abstract class ListPage<E : Any>(protected open val viewModel: ListPageViewModel
 
     @Composable
     override fun swipeContent(refreshState: SwipeRefreshState) {
+        Log.d("$id - swipeContent", "Draw")
         val items = lazyItems.collectAsLazyPagingItems()
         if (viewModel.refresh) {
             items.refresh()

@@ -24,6 +24,7 @@ import com.gargantua7.cams.gp.android.ui.component.photo.PhotoPreview
 import com.gargantua7.cams.gp.android.ui.component.resizable.Resizable
 import com.gargantua7.cams.gp.android.ui.component.swipeable.Swipeable
 import com.gargantua7.cams.gp.android.ui.component.topbar.TopBar
+import com.gargantua7.cams.gp.android.ui.message.MessagePollingService
 import com.gargantua7.cams.gp.android.ui.theme.CAMSGPAndroidTheme
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
@@ -54,6 +55,11 @@ abstract class ComposeActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
         draw()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        startService(Intent(this, MessagePollingService::class.java))
     }
 
     fun startActivityWithMsgResult(intent: Intent) {

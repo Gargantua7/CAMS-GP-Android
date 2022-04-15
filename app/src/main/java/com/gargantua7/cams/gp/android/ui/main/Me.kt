@@ -152,9 +152,9 @@ class Me : NavPage {
                         }
                     ) {
                         Spacer(modifier = Modifier.weight(1f))
-                        Icon(imageVector = Icons.Filled.Login, contentDescription = "Login")
+                        Icon(imageVector = Icons.Filled.Login, contentDescription = "Login", tint = Color.White)
                         Spacer(modifier = Modifier.width(10.dp))
-                        Text(text = "Login")
+                        Text(text = "Login", color = Color.White)
                         Spacer(modifier = Modifier.weight(1f))
                     }
 

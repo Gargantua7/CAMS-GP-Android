@@ -3,7 +3,7 @@ package com.gargantua7.cams.gp.android.logic.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.gargantua7.cams.gp.android.logic.model.Message
+import com.gargantua7.cams.gp.android.logic.model.LocalMsg
 
 /**
  * @author Gargantua7
@@ -12,23 +12,50 @@ import com.gargantua7.cams.gp.android.logic.model.Message
 interface MessageDao {
 
     @Insert
-    suspend fun insert(message: Message)
-
-    @Query("SELECT * FROM msg WHERE sender = :id OR recipient = :id LIMIT 10 offset :page ORDER BY time ")
-    suspend fun queryById(id: String, page: Int): List<Message>
+    suspend fun insert(message: LocalMsg)
 
     @Query(
         """
-            SELECT sender user
-            FROM msg
-            WHERE sender = :id
-            UNION
-            SELECT recipient user
-            FROM msg
-            WHERE recipient = :id
-            LIMIT 10 offset :page ORDER BY time
+        SELECT * 
+        FROM msg 
+        WHERE ((sender = :id AND recipient = :op)
+        OR (recipient = :id AND sender = :op))
+        AND master = :master
+        ORDER BY time DESC
+        LIMIT 10 offset :page 
         """
     )
-    suspend fun queryUsers(id: String, page: Int): List<String>
+    suspend fun queryById(id: String, op: String, page: Int, master: String): List<LocalMsg>
+
+    @Query(
+        """
+        SELECT DISTINCT user
+        FROM (
+            SELECT sender AS user, time
+            FROM msg
+            WHERE recipient = :id AND master = :master
+            UNION ALL
+            SELECT recipient AS user, time
+            FROM msg
+            WHERE sender = :id AND master = :master
+        )
+        ORDER BY time DESC
+        LIMIT 10 offset :page 
+        """
+    )
+    suspend fun queryUsers(id: String, page: Int, master: String): List<String>
+
+    @Query(
+        """
+        SELECT * 
+        FROM msg 
+        WHERE ((sender = :id AND recipient = :op)
+        OR (recipient = :id AND sender = :op))
+        AND master = :master
+        ORDER BY time DESC
+        LIMIT 1
+        """
+    )
+    suspend fun queryLast(id: String, op: String, master: String): LocalMsg?
 
 }

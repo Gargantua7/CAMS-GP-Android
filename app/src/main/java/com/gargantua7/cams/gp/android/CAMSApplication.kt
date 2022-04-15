@@ -64,17 +64,13 @@ class CAMSApplication : Application() {
                 }
             }
         }
-        val msgDB = Transformations.switchMap(session) {
-            liveData(Dispatchers.IO) {
-                if (it == null) emit(null)
-                else emit(
-                    Room.databaseBuilder(
-                        context,
-                        MsgDatabase::class.java, it
-                    ).allowMainThreadQueries().build()
-                )
-            }
+        val msgDB by lazy {
+            Room.databaseBuilder(
+                context,
+                MsgDatabase::class.java, "msg"
+            ).allowMainThreadQueries().build()
         }
+        var msgRefresh by mutableStateOf(false)
     }
 
     private val scope = MainScope()

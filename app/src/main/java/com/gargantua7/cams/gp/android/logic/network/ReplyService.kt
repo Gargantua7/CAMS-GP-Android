@@ -26,4 +26,10 @@ interface ReplyService {
         @Header("session") session: String? = CAMSApplication.session.value
     ): NoResultResponse
 
+    @GET("repair/reply/get/{id}")
+    suspend fun getReplyById(
+        @Path("id") id: Long,
+        @Header("session") session: String? = CAMSApplication.session.value
+    ): NetworkResponse<NormalReply>
+
 }

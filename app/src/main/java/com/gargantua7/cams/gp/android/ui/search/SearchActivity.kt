@@ -117,6 +117,5 @@ class SearchActivity : ComposeActivity(), BackTopBar, SearchTopBar {
 
     override fun onClear() {
         super.onClear()
-        onSearch("")
     }
 }
