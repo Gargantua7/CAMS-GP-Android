@@ -17,6 +17,8 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,7 +41,7 @@ import com.gargantua7.cams.gp.android.ui.util.toIntuitive
 
 class PersonActivity : ExhibitComposeActivity<Person>(), FAB {
 
-    override val id = "Person"
+    override var id by mutableStateOf("TA的个人信息")
 
     override val viewModel by lazy { ViewModelProvider(this).get(PersonViewModel::class.java) }
 
@@ -60,6 +62,8 @@ class PersonActivity : ExhibitComposeActivity<Person>(), FAB {
     override fun exhibitContent(item: Person) {
         val flow by viewModel.repairs.observeAsState()
         val repairs = flow?.collectAsLazyPagingItems()
+        val person by viewModel.item.observeAsState()
+        id = (person?.name ?: "") + "的个人信息"
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()

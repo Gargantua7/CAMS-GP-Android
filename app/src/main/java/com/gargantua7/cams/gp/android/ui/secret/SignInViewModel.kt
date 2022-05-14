@@ -36,15 +36,16 @@ class SignInViewModel : ComposeViewModel() {
                 val session = result.getOrNull()?.get("session") ?: ""
                 CAMSApplication.username = username
                 CAMSApplication.session.value = session
+                CAMSApplication.msgRefresh = true
                 SecretRepository.saveSession()
                 PersonRepository.saveUsername()
                 success = true
             } else {
                 showSnackBar(
                     when (result.exceptionOrNull()) {
-                        is AuthorizedException -> "Username or Password Wrong"
-                        is UnknownHostException -> "Network Error"
-                        else -> "Unknown Exception: Please Call System Admin"
+                        is AuthorizedException -> "用户名或密码错误"
+                        is UnknownHostException -> "网络错误"
+                        else -> "未知错误"
                     }
                 )
             }

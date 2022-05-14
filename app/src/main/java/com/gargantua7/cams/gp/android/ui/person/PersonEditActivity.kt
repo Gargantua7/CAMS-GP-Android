@@ -40,7 +40,7 @@ class PersonEditActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar {
     @Composable
     override fun RowScope.coreComponents() {
         Text(
-            text = "Profile Editor",
+            text = "编辑个人信息",
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
             color = Color.White
@@ -95,7 +95,7 @@ class PersonEditActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar {
             Spacer(modifier = Modifier.weight(1f))
             Icon(imageVector = Icons.Filled.PublishedWithChanges, contentDescription = "Publish")
             Spacer(modifier = Modifier.width(10.dp))
-            Text(text = "Submit")
+            Text(text = "提交")
             Spacer(modifier = Modifier.weight(1f))
         }
     }

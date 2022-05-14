@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.Color
 fun ComposeViewModel.basicDialog(
     title: String,
     onDismissRequest: () -> Unit = {},
-    confirmText: String = "Sure",
+    confirmText: String = "确定",
     confirmTextColor: Color = MaterialTheme.colors.primary,
     confirmOnClick: () -> Unit = {}
 ) {

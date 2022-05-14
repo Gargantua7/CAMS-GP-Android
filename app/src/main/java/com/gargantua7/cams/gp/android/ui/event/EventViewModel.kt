@@ -25,17 +25,17 @@ class EventViewModel : ExhibitComposeViewModel<Event, Long>() {
             viewModelScope.launch {
                 val res = EventRepository.signEvent(it)
                 if (res.isSuccess) {
-                    showSnackBar("Registered Success")
+                    showSnackBar("报名成功")
                     success = true
                 } else {
                     showSnackBar(
                         when (val e = res.exceptionOrNull()!!) {
                             is BadRequestException -> "Currently Not Allowed"
                             is ForbiddenException ->
-                                if ("full" in e.info) "Registered Full"
+                                if ("full" in e.info) "人数已满"
                                 else {
                                     success = true
-                                    "Already Registered"
+                                    "请勿重复报名"
                                 }
                             else -> "Unknown Exception"
                         }

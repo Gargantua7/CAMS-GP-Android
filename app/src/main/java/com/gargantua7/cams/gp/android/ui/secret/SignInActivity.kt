@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
+import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.ui.component.compose.BoxTextField
 import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
 import com.gargantua7.cams.gp.android.ui.component.topbar.BackTopBar
@@ -31,7 +33,7 @@ class SignInActivity : ComposeActivity(), BackTopBar {
     @Composable
     override fun RowScope.coreComponents() {
         Text(
-            text = "Login",
+            text = stringResource(id = R.string.login),
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
             color = Color.White
@@ -46,7 +48,7 @@ class SignInActivity : ComposeActivity(), BackTopBar {
         ) {
             BoxTextField(
                 text = viewModel.username,
-                placeholder = "Username",
+                placeholder = stringResource(id = R.string.username),
                 leadIcon = Icons.Filled.AccountBox,
                 trailingIcon = {
                     if (viewModel.username.isNotEmpty()) {
@@ -68,7 +70,7 @@ class SignInActivity : ComposeActivity(), BackTopBar {
             )
             BoxTextField(
                 text = viewModel.password,
-                placeholder = "Password",
+                placeholder = stringResource(id = R.string.pwd),
                 leadIcon = Icons.Filled.Password,
                 trailingIcon = {
                     if (viewModel.password.isNotEmpty()) {
@@ -110,7 +112,13 @@ class SignInActivity : ComposeActivity(), BackTopBar {
             )
             button()
             if (viewModel.success) {
-                setResult(RESULT_OK, Intent().putExtra("msg", "Login Success"))
+                setResult(
+                    RESULT_OK,
+                    Intent().putExtra(
+                        "msg",
+                        "${stringResource(id = R.string.login)} ${stringResource(id = R.string.success)}"
+                    )
+                )
                 finish()
             }
         }
@@ -138,7 +146,7 @@ class SignInActivity : ComposeActivity(), BackTopBar {
             Spacer(modifier = Modifier.weight(1f))
             Icon(imageVector = Icons.Filled.Login, contentDescription = "Login")
             Spacer(modifier = Modifier.width(10.dp))
-            Text(text = "Login")
+            Text(text = stringResource(id = R.string.login))
             Spacer(modifier = Modifier.weight(1f))
         }
         Button(
@@ -156,7 +164,7 @@ class SignInActivity : ComposeActivity(), BackTopBar {
             Spacer(modifier = Modifier.weight(1f))
             Icon(imageVector = Icons.Filled.PersonAdd, contentDescription = "Register")
             Spacer(modifier = Modifier.width(10.dp))
-            Text(text = "Register")
+            Text(text = stringResource(id = R.string.reg))
             Spacer(modifier = Modifier.weight(1f))
         }
     }

@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
+import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.ui.component.bottombar.BottomBar
 import com.gargantua7.cams.gp.android.ui.component.compose.BoxTextField
 import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
@@ -35,7 +37,7 @@ class SecretUpdateActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar
     @Composable
     override fun RowScope.coreComponents() {
         Text(
-            text = "Change Password",
+            text = "更改密码",
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
             color = Color.White
@@ -46,7 +48,7 @@ class SecretUpdateActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar
     override fun contentComponents(scaffoldState: ScaffoldState, scope: CoroutineScope) {
         if (viewModel.success) {
             Intent().let {
-                it.putExtra("msg", "Password changed successfully")
+                it.putExtra("msg", "密码更新成功")
                 setResult(RESULT_OK, it)
             }
             finish()
@@ -57,19 +59,19 @@ class SecretUpdateActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar
             Password(
                 text = viewModel.origin,
                 onValueChange = { viewModel.origin = it },
-                placeholder = "Old Password",
+                placeholder = "原密码",
             )
             Password(
                 text = viewModel.new,
                 onValueChange = { viewModel.new = it },
-                placeholder = "New Password",
+                placeholder = "新密码",
                 isError = viewModel.new.isNotEmpty() && !matchPassword(viewModel.new),
                 topic = true
             )
             Password(
                 text = viewModel.confirm,
                 onValueChange = { viewModel.confirm = it },
-                placeholder = "Confirm Password",
+                placeholder = "确认密码",
                 isError = viewModel.confirm.isNotEmpty() && viewModel.confirm != viewModel.new
             )
         }
@@ -93,7 +95,7 @@ class SecretUpdateActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(imageVector = Icons.Filled.PublishedWithChanges, contentDescription = "Publish")
                 Spacer(modifier = Modifier.width(10.dp))
-                Text(text = "Update")
+                Text(text = "更改")
                 Spacer(modifier = Modifier.weight(1f))
             }
         }
@@ -139,7 +141,7 @@ class SecretUpdateActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar
         )
         if (topic && !matchPassword(text)) {
             Text(
-                text = "Password length is 8 to 16 and must contain at least one uppercase letter, one lowercase letter amount one number",
+                text = stringResource(id = R.string.pwd_tip),
                 fontSize = 12.sp,
                 color = MaterialTheme.colors.onSurface
             )

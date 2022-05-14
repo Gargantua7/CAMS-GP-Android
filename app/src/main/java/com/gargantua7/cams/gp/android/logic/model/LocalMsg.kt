@@ -50,7 +50,9 @@ data class LocalMsg(
         name,
         Type.fromString(msg.type),
         when (msg.type) {
-            "Repair" -> if (msg.recipient == CAMSApplication.username) {
+            "Repair" -> if ((CAMSApplication.user.value?.permission
+                    ?: -1) > 0 && CAMSApplication.user.value?.depId == 1
+            ) {
                 "你已被指定为求助帖的负责人，请及时处理"
             } else {
                 "你的求助贴已被管理员指定了负责人，请查看"

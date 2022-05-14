@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -18,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
+import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.ui.component.bottombar.BottomBar
 import com.gargantua7.cams.gp.android.ui.component.compose.BoxTextField
 import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
@@ -35,7 +37,7 @@ class SignUpActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar {
     @Composable
     override fun RowScope.coreComponents() {
         Text(
-            text = "Register",
+            text = stringResource(id = R.string.reg),
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
             color = Color.White
@@ -45,7 +47,13 @@ class SignUpActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar {
     @Composable
     override fun contentComponents(scaffoldState: ScaffoldState, scope: CoroutineScope) {
         if (viewModel.success) {
-            setResult(RESULT_OK, Intent().putExtra("msg", "Registered successfully"))
+            setResult(
+                RESULT_OK,
+                Intent().putExtra(
+                    "msg",
+                    "${stringResource(id = R.string.reg)} ${stringResource(id = R.string.success)}"
+                )
+            )
             finish()
         }
         super.contentComponents(scaffoldState, scope)
@@ -65,7 +73,7 @@ class SignUpActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar {
         BoxTextField(
             text = viewModel.username,
             onValueChange = { viewModel.username = it },
-            placeholder = "Username",
+            placeholder = stringResource(id = R.string.username),
             leadIcon = Icons.Filled.AccountBox,
             keyboardType = KeyboardType.Number,
             isError = viewModel.username.isNotEmpty() && !matchUsername(viewModel.username) || viewModel.usernameAvailable == false,
@@ -74,7 +82,7 @@ class SignUpActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar {
             viewModel.checkUsernameAvailable()
             if (viewModel.usernameAvailable == null) {
                 Text(
-                    text = "Checking Username availability...",
+                    text = "确认用户名可用中...",
                     fontSize = 12.sp,
                     color = MaterialTheme.colors.secondary
                 )
@@ -82,7 +90,7 @@ class SignUpActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar {
                 Password()
             } else {
                 Text(
-                    text = "Username is already taken",
+                    text = "用户名已被使用",
                     fontSize = 12.sp,
                     color = Color.Red
                 )
@@ -95,7 +103,7 @@ class SignUpActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar {
         BoxTextField(
             text = viewModel.password,
             onValueChange = { viewModel.password = it },
-            placeholder = "Password",
+            placeholder = "密码",
             leadIcon = Icons.Filled.Password,
             trailingIcon = {
                 if (viewModel.password.isNotEmpty()) {
@@ -125,7 +133,7 @@ class SignUpActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar {
         if (matchPassword(viewModel.password)) ConfirmPassword()
         else {
             Text(
-                text = "Password length is 8 to 16 and must contain at least one uppercase letter, one lowercase letter amount one number",
+                text = stringResource(id = R.string.pwd_tip),
                 fontSize = 12.sp,
                 color = MaterialTheme.colors.onSurface
             )
@@ -137,7 +145,7 @@ class SignUpActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar {
         BoxTextField(
             text = viewModel.confirmPassword,
             onValueChange = { viewModel.confirmPassword = it },
-            placeholder = "Confirm Password",
+            placeholder = "确认密码",
             leadIcon = Icons.Filled.Password,
             trailingIcon = {
                 if (viewModel.confirmPassword.isNotEmpty()) {
@@ -189,7 +197,7 @@ class SignUpActivity : ComposeActivity(), BackTopBar, Resizable, BottomBar {
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(imageVector = Icons.Filled.PersonAdd, contentDescription = "Register")
                 Spacer(modifier = Modifier.width(10.dp))
-                Text(text = "Register")
+                Text(text = stringResource(id = R.string.reg))
                 Spacer(modifier = Modifier.weight(1f))
             }
         }

@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -30,6 +31,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.gargantua7.cams.gp.android.CAMSApplication
+import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.logic.model.*
 import com.gargantua7.cams.gp.android.ui.component.bottombar.BottomBar
 import com.gargantua7.cams.gp.android.ui.component.compose.ExhibitComposeActivity
@@ -43,7 +45,7 @@ import com.gargantua7.cams.gp.android.ui.util.toIntuitive
 
 class RepairActivity : ExhibitComposeActivity<Repair>(), BottomBar, Resizable, PhotoPreview {
 
-    override val id = "Repair"
+    override val id = com.gargantua7.cams.gp.android.ui.util.stringResource(R.string.Repair)
 
     override val viewModel by lazy { ViewModelProvider(this).get(RepairViewModel::class.java) }
 
@@ -84,7 +86,7 @@ class RepairActivity : ExhibitComposeActivity<Repair>(), BottomBar, Resizable, P
                 if (it.itemCount == 0) {
                     item {
                         Text(
-                            text = "No Reply Yet",
+                            text = stringResource(id = R.string.no_reply),
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colors.secondary,
                             modifier = Modifier.fillMaxWidth()
@@ -93,7 +95,7 @@ class RepairActivity : ExhibitComposeActivity<Repair>(), BottomBar, Resizable, P
                 }
             } ?: item {
                 Text(
-                    text = "No Reply Yet",
+                    text = stringResource(id = R.string.no_reply),
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colors.secondary,
                     modifier = Modifier.fillMaxWidth()
@@ -182,16 +184,22 @@ class RepairActivity : ExhibitComposeActivity<Repair>(), BottomBar, Resizable, P
             val pics by viewModel.pics.observeAsState()
             if (!pics.isNullOrEmpty()) {
                 Row(
-                    modifier = Modifier.horizontalScroll(rememberScrollState()).height(100.dp).padding(15.dp, 5.dp),
+                    modifier = Modifier
+                        .horizontalScroll(rememberScrollState())
+                        .height(100.dp)
+                        .padding(15.dp, 5.dp),
                 ) {
                     pics!!.forEachIndexed { i, pic ->
                         Image(
                             pic.asImageBitmap(),
                             "pic-$i",
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier.height(100.dp).width(100.dp).clickable {
-                                viewModel.bitmap = pic
-                            }
+                            modifier = Modifier
+                                .height(100.dp)
+                                .width(100.dp)
+                                .clickable {
+                                    viewModel.bitmap = pic
+                                }
                         )
                         Spacer(Modifier.width(10.dp))
                     }
@@ -242,10 +250,10 @@ class RepairActivity : ExhibitComposeActivity<Repair>(), BottomBar, Resizable, P
                 modifier = Modifier.size(12.dp)
             )
             Spacer(modifier = Modifier.width(5.dp))
-            Text(text = "Principal:", fontSize = 12.sp)
+            Text(text = "${stringResource(id = R.string.Principal)}:", fontSize = 12.sp)
             Spacer(modifier = Modifier.width(5.dp))
             repair.principal?.let { p -> personInfo(person = p) }
-            if (repair.principal == null) Text(text = "Unassigned", fontSize = 12.sp)
+            if (repair.principal == null) Text(text = stringResource(id = R.string.Unassigned), fontSize = 12.sp)
         }
     }
 
@@ -261,7 +269,11 @@ class RepairActivity : ExhibitComposeActivity<Repair>(), BottomBar, Resizable, P
                     tint = MaterialTheme.colors.secondary
                 )
                 Spacer(modifier = Modifier.width(5.dp))
-                Text(text = "Private", fontSize = 12.sp, color = MaterialTheme.colors.secondary)
+                Text(
+                    text = stringResource(id = R.string.privete),
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colors.secondary
+                )
                 Spacer(modifier = Modifier.width(10.dp))
             }
         }
@@ -279,7 +291,7 @@ class RepairActivity : ExhibitComposeActivity<Repair>(), BottomBar, Resizable, P
                         ) {
                             viewModel.showDialog {
                                 basicDialog(
-                                    title = "Change State to ${if (viewModel.item.value?.state == true) "CLOSE" else "OPEN"}",
+                                    title = "${stringResource(id = R.string.Change_State_to)} ${if (viewModel.item.value?.state == true) "CLOSE" else "OPEN"}",
                                     confirmOnClick = { viewModel.changeState() }
                                 )
                             }
@@ -303,11 +315,26 @@ class RepairActivity : ExhibitComposeActivity<Repair>(), BottomBar, Resizable, P
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun replyItem(reply: Reply) {
+        val u by CAMSApplication.user.observeAsState()
         Column(
             modifier = Modifier
                 .background(MaterialTheme.colors.surface)
+                .combinedClickable(
+                    onClick = {},
+                    onLongClick = {
+                        if (reply is NormalReply && reply.type == 0 && (u?.permission ?: 0) == 99) {
+                            viewModel.showDialog {
+                                basicDialog(
+                                    title = "确定删除该回复？",
+                                    confirmOnClick = { viewModel.deleteReply(reply.id) }
+                                )
+                            }
+                        }
+                    }
+                )
         ) {
             Column(
                 modifier = Modifier
@@ -349,7 +376,7 @@ class RepairActivity : ExhibitComposeActivity<Repair>(), BottomBar, Resizable, P
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Change State to ", fontSize = 12.sp)
+            Text(text = stringResource(id = R.string.Change_State_to), fontSize = 12.sp)
             Spacer(modifier = Modifier.width(5.dp))
             Icon(
                 Icons.Filled.Lens,
@@ -371,7 +398,7 @@ class RepairActivity : ExhibitComposeActivity<Repair>(), BottomBar, Resizable, P
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Assigned Principal to", fontSize = 12.sp)
+            Text(text = stringResource(id = R.string.Assigned_Principal_to), fontSize = 12.sp)
             Spacer(modifier = Modifier.width(5.dp))
             personInfo(person = principal)
         }

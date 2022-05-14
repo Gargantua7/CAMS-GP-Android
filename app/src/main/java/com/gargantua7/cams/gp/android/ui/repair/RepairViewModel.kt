@@ -93,10 +93,10 @@ class RepairViewModel : ExhibitComposeViewModel<Repair, Long>() {
                     if (res.isSuccess) {
                         editor = ""
                         fresh = true
-                        "Send Reply Success"
+                        "回复成功"
                     } else {
                         when (res.exceptionOrNull()) {
-                            is AuthorizedException -> "Login Expired"
+                            is AuthorizedException -> "信息有误，请重新登录"
                             else -> "Unknown Exception"
                         }
                     }
@@ -113,7 +113,7 @@ class RepairViewModel : ExhibitComposeViewModel<Repair, Long>() {
                     if (it.isSuccess) {
                         editor = ""
                         id.value = id.value
-                        "State Change Success"
+                        "状态更改成功"
                     } else {
                         val e = it.exceptionOrNull()
                         when (e) {
@@ -136,7 +136,7 @@ class RepairViewModel : ExhibitComposeViewModel<Repair, Long>() {
                 showSnackBar(
                     if (it.isSuccess) {
                         id.value = id.value
-                        "Assign Principle Success"
+                        "指定负责人成功"
                     } else {
                         val e = it.exceptionOrNull()
                         when (e) {
@@ -145,6 +145,16 @@ class RepairViewModel : ExhibitComposeViewModel<Repair, Long>() {
                         }
                     }
                 )
+            }
+        }
+    }
+
+    fun deleteReply(id: Long) {
+        viewModelScope.launch {
+            val res = ReplyRepository.deleteReply(id)
+            if (res.isSuccess) {
+                showSnackBar("删除成功")
+                fresh = true
             }
         }
     }

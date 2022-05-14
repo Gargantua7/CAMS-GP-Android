@@ -17,10 +17,12 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import com.gargantua7.cams.gp.android.CAMSApplication
+import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.logic.model.Event
 import com.gargantua7.cams.gp.android.ui.component.bottombar.BottomBar
 import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
@@ -35,7 +37,7 @@ import java.time.ZoneId
 
 class EventActivity : ExhibitComposeActivity<Event>(), BottomBar, FAB {
 
-    override val id = "Event"
+    override val id = com.gargantua7.cams.gp.android.ui.util.stringResource(R.string.event)
 
     override val viewModel by lazy { ViewModelProvider(this).get(EventViewModel::class.java) }
 
@@ -67,15 +69,19 @@ class EventActivity : ExhibitComposeActivity<Event>(), BottomBar, FAB {
         ) {
             Text(text = item.name, fontSize = 24.sp, modifier = Modifier.padding(15.dp, 5.dp))
             Divider()
-            IconRow(icon = Icons.Filled.Groups, hint = "Number", text = item.number.toString())
-            IconRow(icon = Icons.Filled.Place, hint = "Local", text = item.location)
-            IconRow(icon = Icons.Filled.DateRange, hint = "Event Time", text = item.eventTime.format())
+            IconRow(icon = Icons.Filled.Groups, hint = stringResource(R.string.e_number), text = item.number.toString())
+            IconRow(icon = Icons.Filled.Place, hint = stringResource(R.string.e_local), text = item.location)
             IconRow(
-                icon = Icons.Filled.Alarm, hint = "Sign Time",
+                icon = Icons.Filled.DateRange,
+                hint = stringResource(R.string.e_time),
+                text = item.eventTime.format()
+            )
+            IconRow(
+                icon = Icons.Filled.Alarm, hint = stringResource(R.string.e_sign_time),
                 text = "${item.startTime.format()} - ${item.endTime.format()}"
             )
             Divider()
-            IconRow(icon = Icons.Filled.Info, text = "Event Description")
+            IconRow(icon = Icons.Filled.Info, text = stringResource(R.string.e_des))
             Text(
                 text = item.content, modifier = Modifier
                     .weight(1f)
@@ -97,7 +103,7 @@ class EventActivity : ExhibitComposeActivity<Event>(), BottomBar, FAB {
     }
 
     override fun fabOnClick(context: ComposeActivity) {
-        startActivity(Intent(this, EventRegisteredActivity::class.java).apply {
+        startActivity(Intent(this, EventStatisticsActivity::class.java).apply {
             putExtra("id", viewModel.id.value)
         })
     }
@@ -142,9 +148,9 @@ class EventActivity : ExhibitComposeActivity<Event>(), BottomBar, FAB {
                     }
                 ) {
                     val (icon, text) = when {
-                        viewModel.success -> Icons.Filled.EventAvailable to "Registered"
-                        now in it.startTime..it.endTime -> Icons.Filled.EditCalendar to "Register now"
-                        else -> Icons.Filled.EventBusy to "Out of time"
+                        viewModel.success -> Icons.Filled.EventAvailable to stringResource(id = R.string.e_reged)
+                        now in it.startTime..it.endTime -> Icons.Filled.EditCalendar to stringResource(id = R.string.e_reg_now)
+                        else -> Icons.Filled.EventBusy to stringResource(R.string.e_out)
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Icon(imageVector = icon, contentDescription = "Login")

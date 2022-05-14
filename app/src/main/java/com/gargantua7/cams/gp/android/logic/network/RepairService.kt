@@ -49,4 +49,10 @@ interface RepairService {
         @Body repair: NewRepair,
         @Header("session") session: String? = CAMSApplication.session.value
     ): NoResultResponse
+
+    @POST("repair/delete/{id}")
+    suspend fun deleteRepair(
+        @Path("id") id: Long,
+        @Header("session") session: String? = CAMSApplication.session.value
+    ): NoResultResponse
 }

@@ -3,9 +3,7 @@ package com.gargantua7.cams.gp.android.ui.component.page
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -13,6 +11,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Lens
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,8 +22,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gargantua7.cams.gp.android.CAMSApplication
 import com.gargantua7.cams.gp.android.logic.model.Repair
 import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
+import com.gargantua7.cams.gp.android.ui.component.compose.basicDialog
+import com.gargantua7.cams.gp.android.ui.main.MainActivity
 import com.gargantua7.cams.gp.android.ui.repair.RepairActivity
 import com.gargantua7.cams.gp.android.ui.util.decodeImage
 import com.gargantua7.cams.gp.android.ui.util.toIntuitive
@@ -40,7 +43,7 @@ abstract class RepairsPage(viewModel: ListPageViewModel<Repair>) : ListPage<Repa
         }
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
+    @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
     @Composable
     override fun listItem(repair: Repair) {
         val context = LocalContext.current as ComposeActivity
@@ -57,21 +60,34 @@ abstract class RepairsPage(viewModel: ListPageViewModel<Repair>) : ListPage<Repa
             if (res.find()) {
                 res.group(1)?.let { s ->
                     s.split(",").forEach { b ->
-                        list.add(decodeImage(b))
+                        if (b.isNotBlank()) list.add(decodeImage(b))
                         if (list.size == 3) return@forEach
                     }
                 }
             }
             list
         }
+        val u by CAMSApplication.user.observeAsState()
         Card(
             modifier = Modifier
                 .padding(5.dp, 2.5.dp)
                 .background(
                     color = MaterialTheme.colors.surface,
                     shape = RoundedCornerShape(20.dp)
-                ),
-            onClick = { itemOnClick(repair, context) }
+                )
+                .combinedClickable(
+                    onClick = { itemOnClick(repair, context) },
+                    onLongClick = {
+                        if (context is MainActivity) {
+                            val vm = context.viewModel
+                            if ((u?.permission ?: 0) == 99) {
+                                vm.showDialog {
+                                    basicDialog(title = "确认删除？", confirmOnClick = { vm.deleteRepair(repair.id) })
+                                }
+                            }
+                        }
+                    }
+                )
         ) {
             Column {
                 Column(

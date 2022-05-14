@@ -13,9 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.logic.model.Event
 import com.gargantua7.cams.gp.android.ui.event.EventActivity
 import com.gargantua7.cams.gp.android.ui.util.format
@@ -62,19 +64,19 @@ abstract class EventsPage(viewModel: ListPageViewModel<Event>) : ListPage<Event>
                 ) {
                     Column {
                         Text(
-                            text = "Event Start At:" + event.eventTime.format(),
+                            text = "${stringResource(id = R.string.e_time)}:" + event.eventTime.format(),
                             fontSize = 10.sp,
                             color = MaterialTheme.colors.onBackground
                         )
                         if (!live) {
                             Text(
-                                text = "Sign Start At:" + event.startTime.format(),
+                                text = "${stringResource(R.string.e_start)}:" + event.startTime.format(),
                                 fontSize = 10.sp,
                                 color = MaterialTheme.colors.onBackground
                             )
                         }
                         Text(
-                            text = "Sign End At:" + event.endTime.format(),
+                            text = "${stringResource(R.string.e_end)}:" + event.endTime.format(),
                             fontSize = 10.sp,
                             color = MaterialTheme.colors.onBackground
                         )
@@ -90,9 +92,9 @@ abstract class EventsPage(viewModel: ListPageViewModel<Event>) : ListPage<Event>
                         ) {
                             Text(
                                 text = when {
-                                    nowForShanghai() < event.startTime -> "WAITING"
-                                    nowForShanghai() in event.startTime..event.endTime -> "SIGNING"
-                                    else -> "ENDING"
+                                    nowForShanghai() < event.startTime -> stringResource(R.string.e_waiting)
+                                    nowForShanghai() in event.startTime..event.endTime -> stringResource(R.string.e_signing)
+                                    else -> stringResource(id = R.string.e_ending)
                                 },
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colors.onBackground

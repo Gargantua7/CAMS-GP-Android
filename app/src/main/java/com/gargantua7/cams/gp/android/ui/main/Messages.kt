@@ -50,7 +50,7 @@ class Messages(override val viewModel: MessageViewModel) : MsgPage(viewModel), N
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.weight(1f))
-                Text("Please login first")
+                Text(stringResource(R.string.plz_login_1st))
                 Button(
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = MaterialTheme.colors.primary,
@@ -66,7 +66,7 @@ class Messages(override val viewModel: MessageViewModel) : MsgPage(viewModel), N
                     Spacer(modifier = Modifier.weight(1f))
                     Icon(imageVector = Icons.Filled.Login, contentDescription = "Login", tint = Color.White)
                     Spacer(modifier = Modifier.width(10.dp))
-                    Text(text = "Login", color = Color.White)
+                    Text(text = stringResource(R.string.login), color = Color.White)
                     Spacer(modifier = Modifier.weight(1f))
                 }
                 Spacer(modifier = Modifier.weight(1f))

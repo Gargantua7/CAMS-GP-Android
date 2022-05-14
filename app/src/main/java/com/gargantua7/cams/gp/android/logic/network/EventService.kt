@@ -33,4 +33,31 @@ interface EventService {
         @Path("page") page: Int,
         @Header("session") session: String? = CAMSApplication.session.value
     ): NetworkResponse<List<Person>>
+
+    @GET("event/{id}/statistics/count")
+    suspend fun count(@Path("id") id: Long): NetworkResponse<Int>
+
+    @GET("event/{id}/statistics/groupBy/sex")
+    suspend fun sexGroup(
+        @Path("id") id: Long,
+        @Header("session") session: String? = CAMSApplication.session.value
+    ): NetworkResponse<Map<String, Int>>
+
+    @GET("event/{id}/statistics/groupBy/time")
+    suspend fun timeGroup(
+        @Path("id") id: Long,
+        @Header("session") session: String? = CAMSApplication.session.value
+    ): NetworkResponse<Map<String, Int>>
+
+    @GET("event/{id}/statistics/groupBy/collage")
+    suspend fun collageGroup(
+        @Path("id") id: Long,
+        @Header("session") session: String? = CAMSApplication.session.value
+    ): NetworkResponse<Map<String, Int>>
+
+    @GET("event/{id}/statistics/groupBy/major")
+    suspend fun majorGroup(
+        @Path("id") id: Long,
+        @Header("session") session: String? = CAMSApplication.session.value
+    ): NetworkResponse<Map<String, Int>>
 }

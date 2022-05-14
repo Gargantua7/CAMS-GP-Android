@@ -22,7 +22,7 @@ interface MessageDao {
         OR (recipient = :id AND sender = :op))
         AND master = :master
         ORDER BY time DESC
-        LIMIT 10 offset :page 
+        LIMIT 10 offset :page * 10
         """
     )
     suspend fun queryById(id: String, op: String, page: Int, master: String): List<LocalMsg>
@@ -40,7 +40,7 @@ interface MessageDao {
             WHERE sender = :id AND master = :master
         )
         ORDER BY time DESC
-        LIMIT 10 offset :page 
+        LIMIT 10 offset :page * 10
         """
     )
     suspend fun queryUsers(id: String, page: Int, master: String): List<String>

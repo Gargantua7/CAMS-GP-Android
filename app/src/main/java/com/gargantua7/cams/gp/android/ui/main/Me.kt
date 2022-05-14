@@ -95,7 +95,7 @@ class Me : NavPage {
                     Spacer(Modifier.height(15.dp))
                     IconRow(
                         icon = Icons.Filled.Person,
-                        text = "Update Profile",
+                        text = stringResource(R.string.up_pf),
                         onClick = {
                             Intent(context, PersonEditActivity::class.java).let { i ->
                                 i.putExtra("id", it.username)
@@ -105,19 +105,19 @@ class Me : NavPage {
                     )
                     IconRow(
                         icon = Icons.Filled.Password,
-                        text = "Change Password",
+                        text = stringResource(R.string.ch_pwd),
                         onClick = {
                             context.startActivityWithMsgResult(Intent(context, SecretUpdateActivity::class.java))
                         }
                     )
                     IconRow(
                         icon = Icons.Filled.Logout,
-                        text = "Logout",
+                        text = stringResource(R.string.logout),
                         onClick = {
                             context.apply {
                                 viewModel.showDialog {
                                     basicDialog(
-                                        title = "Sure Logout?",
+                                        title = "${stringResource(R.string.sure)} ${stringResource(R.string.logout)}?",
                                         confirmOnClick = {
                                             CAMSApplication.session.value = null
                                             CAMSApplication.username = null
@@ -127,7 +127,13 @@ class Me : NavPage {
                                             scope.launch {
                                                 SecretRepository.removeSession()
                                                 PersonRepository.removeUsername()
-                                                viewModel.showSnackBar("Logout Success")
+                                                viewModel.showSnackBar(
+                                                    "${stringResource(R.string.logout)} ${
+                                                        stringResource(
+                                                            R.string.success
+                                                        )
+                                                    }"
+                                                )
                                             }
                                         },
                                         confirmTextColor = Color.Red
@@ -154,14 +160,14 @@ class Me : NavPage {
                         Spacer(modifier = Modifier.weight(1f))
                         Icon(imageVector = Icons.Filled.Login, contentDescription = "Login", tint = Color.White)
                         Spacer(modifier = Modifier.width(10.dp))
-                        Text(text = "Login", color = Color.White)
+                        Text(text = stringResource(R.string.login), color = Color.White)
                         Spacer(modifier = Modifier.weight(1f))
                     }
 
                 }
             }
             Spacer(Modifier.height(15.dp))
-            IconRow(icon = Icons.Filled.Settings, text = "Settings", onClick = {
+            IconRow(icon = Icons.Filled.Settings, text = stringResource(R.string.settings), onClick = {
 
             })
         }

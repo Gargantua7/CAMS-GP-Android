@@ -37,7 +37,7 @@ class PersonEditViewModel : ExhibitComposeViewModel<Person, String>() {
                 val collageRes = ResourceRepository.getCollage(major.collageId)
                 baseInfoViewModel.collage = collageRes.getOrThrow()
             } catch (_: Throwable) {
-                showSnackBar("Network Error")
+                showSnackBar("网络错误")
             }
         }
     }
@@ -55,7 +55,7 @@ class PersonEditViewModel : ExhibitComposeViewModel<Person, String>() {
             showSnackBar(
                 if (res.isSuccess) {
                     id.value = id.value
-                    "Update Success"
+                    "更新成功"
                 } else {
                     when (res.exceptionOrNull()) {
                         is BadRequestException, is ForbiddenException -> "Wrong Request Param Format"

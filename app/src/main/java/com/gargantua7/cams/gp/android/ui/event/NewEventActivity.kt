@@ -36,7 +36,7 @@ import java.time.LocalTime
 
 class NewEventActivity : ComposeActivity(), BackTopBar, SendTopBar, Resizable {
 
-    private val title = "Create Event"
+    private val title = "新活动"
     override val viewModel by lazy { ViewModelProvider(this).get(NewEventViewModel::class.java) }
 
 
@@ -55,26 +55,26 @@ class NewEventActivity : ComposeActivity(), BackTopBar, SendTopBar, Resizable {
             IconTextField(
                 value = viewModel.name,
                 onValueChange = { viewModel.name = it },
-                label = "Title",
+                label = "活动名",
                 icon = Icons.Filled.Event,
                 maxWords = 20
             )
             IconTextField(
                 value = viewModel.location,
                 onValueChange = { viewModel.location = it },
-                label = "Location",
+                label = "活动地点",
                 icon = Icons.Filled.Place
             )
             IconTextField(
                 value = viewModel.number,
                 onValueChange = { viewModel.number = it },
-                label = "Number",
+                label = "最大报名人数",
                 icon = Icons.Filled.Groups,
             )
             IconTextField(
                 value = (viewModel.startTime?.format() ?: ""),
                 icon = Icons.Filled.Alarm,
-                label = "Registration Start Date Time",
+                label = "报名开始时间",
                 onClick = {
                     var choose: LocalDate
                     datePicker(viewModel.startTime) { date ->
@@ -88,7 +88,7 @@ class NewEventActivity : ComposeActivity(), BackTopBar, SendTopBar, Resizable {
             )
             IconTextField(
                 value = (viewModel.endTime?.format() ?: ""),
-                label = "Registration End Date Time",
+                label = "报名结束时间",
                 icon = Icons.Filled.AlarmOff,
                 onClick = {
                     var choose: LocalDate
@@ -103,7 +103,7 @@ class NewEventActivity : ComposeActivity(), BackTopBar, SendTopBar, Resizable {
             )
             IconTextField(
                 value = (viewModel.eventTime?.format() ?: ""),
-                label = "Event Date Time",
+                label = "活动时间",
                 icon = Icons.Filled.DateRange,
                 onClick = {
                     var choose: LocalDate
@@ -117,7 +117,7 @@ class NewEventActivity : ComposeActivity(), BackTopBar, SendTopBar, Resizable {
                 }
             )
             Divider()
-            IconRow(icon = Icons.Filled.Info, text = "Description")
+            IconRow(icon = Icons.Filled.Info, text = "活动介绍")
             TextField(
                 value = viewModel.content,
                 onValueChange = { viewModel.content = it },

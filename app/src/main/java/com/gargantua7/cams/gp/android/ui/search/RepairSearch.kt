@@ -18,7 +18,7 @@ class RepairSearch(override val viewModel: RepairSearchViewModel) : RepairsPage(
 
     override val id: String = "RepairSearch"
     override val title = "RepairSearch"
-    override val element = "Repair"
+    override val element = "求助帖"
     override val mode = SearchViewModel.REPAIR_FULL_MODE
 
     override lateinit var lazyItems: Flow<PagingData<Repair>>

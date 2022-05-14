@@ -19,10 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.ui.util.clearFocusOnKeyboardDismiss
 
 /**
@@ -71,7 +73,7 @@ interface SearchTopBar : TopBar {
             ) {
                 if (viewModel.value.isEmpty()) {
                     Text(
-                        "Search",
+                        stringResource(R.string.search),
                         fontSize = 16.sp,
                         color = Color.LightGray,
                         modifier = Modifier.fillMaxWidth()

@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.Flow
 /**
  * @author Gargantua7
  */
-abstract class ListPage<E : Any>(protected open val viewModel: ListPageViewModel<E>) : Page, Swipeable {
+abstract class ListPage<E : Any>(open val viewModel: ListPageViewModel<E>) : Page, Swipeable {
 
     abstract val title: String
 

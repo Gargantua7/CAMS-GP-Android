@@ -41,12 +41,14 @@ class NewRepairViewModel : ComposeViewModel(), MultipartPicker.ViewModel {
         viewModelScope.launch {
             val ct = buildString {
                 append(content)
-                append("\n<img>")
-                pics.forEachIndexed { i, it ->
-                    append(encodeImage(it))
-                    if (i != pics.lastIndex) append(",")
+                if (pics.isNotEmpty()) {
+                    append("\n<img>")
+                    pics.forEachIndexed { i, it ->
+                        append(encodeImage(it))
+                        if (i != pics.lastIndex) append(",")
+                    }
+                    append("<\\img>")
                 }
-                append("<\\img>")
             }
             val res = RepairRepository.createNewRepair(NewRepair(title, ct, private))
             if (res.isSuccess) {

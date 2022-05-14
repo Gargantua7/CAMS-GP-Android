@@ -13,12 +13,10 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true">
-        <service
-                android:name=".ui.message.MessagePollingService"
-                android:enabled="true"
-                android:exported="true">
-        </service>
-
+        <activity
+                android:name=".ui.event.EventStatisticsActivity"
+                android:exported="true"
+                android:theme="@style/Theme.CAMSGPAndroid.NoActionBar"/>
         <activity
                 android:name=".ui.message.MessageActivity"
                 android:exported="true"
@@ -87,6 +85,12 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <service
+                android:name=".ui.message.MessagePollingService"
+                android:enabled="true"
+                android:exported="true">
+        </service>
     </application>
 
 </manifest>

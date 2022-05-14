@@ -23,4 +23,8 @@ object ReplyRepository {
         replyService.getReplyById(replyId).get()
     }
 
+    suspend fun deleteReply(replyId: Long) = fire {
+        replyService.deleteReplyById(replyId).get()
+    }
+
 }

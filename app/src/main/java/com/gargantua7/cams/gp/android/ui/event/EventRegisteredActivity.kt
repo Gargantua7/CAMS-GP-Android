@@ -39,7 +39,7 @@ class EventRegisteredActivity : ComposeActivity(), BackTopBar {
     @Composable
     override fun RowScope.coreComponents() {
         Text(
-            text = "Registered",
+            text = "已报名名单",
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
             color = Color.White

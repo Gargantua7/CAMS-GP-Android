@@ -41,4 +41,7 @@ object RepairRepository {
         repairService.createNewRepair(repair).get()
     }
 
+    suspend fun deleteRepair(id: Long) = fire {
+        repairService.deleteRepair(id).get()
+    }
 }

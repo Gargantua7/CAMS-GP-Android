@@ -84,7 +84,7 @@ class SearchActivity : ComposeActivity(), BackTopBar, SearchTopBar {
     fun dialog() {
         viewModel.picked?.let { (id, name) ->
             viewModel.showDialog {
-                basicDialog(title = "Sure reassign to $name?",
+                basicDialog(title = "确认指定负责人为 $name?",
                     onDismissRequest = { viewModel.picked = null },
                     confirmOnClick = {
                         viewModel.picked = null

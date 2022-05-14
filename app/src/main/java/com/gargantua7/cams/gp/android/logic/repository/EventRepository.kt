@@ -20,4 +20,14 @@ object EventRepository {
     suspend fun createNewEvent(event: NewEvent) = fire { eventService.createNewEvent(event).get() }
 
     suspend fun getSignPersonList(id: Long, page: Int) = fire { eventService.getSignPersonList(id, page).get() }
+
+    suspend fun count(id: Long) = fire { eventService.count(id).get() }
+
+    suspend fun sexGroup(id: Long) = fire { eventService.sexGroup(id).get() }
+
+    suspend fun timeGroup(id: Long) = fire { eventService.timeGroup(id).get() }
+
+    suspend fun collageGroup(id: Long) = fire { eventService.collageGroup(id).get() }
+
+    suspend fun majorGroup(id: Long) = fire { eventService.majorGroup(id).get() }
 }

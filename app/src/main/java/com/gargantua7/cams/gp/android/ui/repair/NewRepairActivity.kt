@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import com.gargantua7.cams.gp.android.CAMSApplication
+import com.gargantua7.cams.gp.android.R
 import com.gargantua7.cams.gp.android.ui.component.compose.ComposeActivity
 import com.gargantua7.cams.gp.android.ui.component.photo.MultipartPicker
 import com.gargantua7.cams.gp.android.ui.component.photo.PhotoPreview
@@ -43,7 +45,7 @@ class NewRepairActivity : ComposeActivity(), BackTopBar, SendTopBar, Resizable, 
     @Composable
     override fun RowScope.coreComponents() {
         Text(
-            text = "Create new Repair",
+            text = stringResource(R.string.Create_new_Repair),
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
             maxLines = 1,
@@ -55,7 +57,7 @@ class NewRepairActivity : ComposeActivity(), BackTopBar, SendTopBar, Resizable, 
     @Composable
     override fun contentComponents(scaffoldState: ScaffoldState, scope: CoroutineScope) {
         if (viewModel.success) {
-            setResult(RESULT_OK, Intent().putExtra("msg", "Create Success"))
+            setResult(RESULT_OK, Intent().putExtra("msg", "发布成功"))
             finish()
         }
         Column(modifier = Modifier.background(MaterialTheme.colors.surface)) {
@@ -76,7 +78,7 @@ class NewRepairActivity : ComposeActivity(), BackTopBar, SendTopBar, Resizable, 
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     placeholder = {
                         Text(
-                            text = "Take a straightforward title",
+                            text = stringResource(id = R.string.take_title),
                             color = MaterialTheme.colors.secondary,
                             fontSize = 24.sp
                         )
@@ -103,7 +105,7 @@ class NewRepairActivity : ComposeActivity(), BackTopBar, SendTopBar, Resizable, 
                 ),
                 placeholder = {
                     Text(
-                        text = "Detailed description of the issue",
+                        text = stringResource(id = R.string.take_content),
                         color = MaterialTheme.colors.secondary
                     )
                 },
@@ -112,21 +114,26 @@ class NewRepairActivity : ComposeActivity(), BackTopBar, SendTopBar, Resizable, 
                     .fillMaxWidth()
             )
             Row(
-                modifier = Modifier.horizontalScroll(rememberScrollState()).height(100.dp)
+                modifier = Modifier
+                    .horizontalScroll(rememberScrollState())
+                    .height(100.dp)
             ) {
                 viewModel.pics.forEachIndexed { i, pic ->
                     Image(
                         pic.asImageBitmap(),
                         "pic-$i",
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.height(100.dp).width(100.dp).combinedClickable(
-                            onClick = {
-                                viewModel.bitmap = pic
-                            },
-                            onLongClick = {
-                                viewModel.pics.removeAt(i)
-                            }
-                        )
+                        modifier = Modifier
+                            .height(100.dp)
+                            .width(100.dp)
+                            .combinedClickable(
+                                onClick = {
+                                    viewModel.bitmap = pic
+                                },
+                                onLongClick = {
+                                    viewModel.pics.removeAt(i)
+                                }
+                            )
                     )
                 }
             }
@@ -142,7 +149,7 @@ class NewRepairActivity : ComposeActivity(), BackTopBar, SendTopBar, Resizable, 
                     Icon(Icons.Filled.Image, "Image")
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                Text(text = "PRIVATE")
+                Text(text = stringResource(id = R.string.privete))
                 Checkbox(
                     checked = viewModel.private,
                     onCheckedChange = { viewModel.private = it },

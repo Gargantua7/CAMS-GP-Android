@@ -27,7 +27,6 @@ class PersonBaseInfoPage(private val viewModel: PersonBaseInfoViewModel, private
         Name()
         Sex()
         Collage()
-        Major()
         Tel()
     }
 
@@ -36,7 +35,7 @@ class PersonBaseInfoPage(private val viewModel: PersonBaseInfoViewModel, private
         BoxTextField(
             text = viewModel.name,
             onValueChange = { viewModel.name = it },
-            placeholder = "Name",
+            placeholder = "姓名",
             leadIcon = Icons.Filled.Person
         )
     }
@@ -73,7 +72,7 @@ class PersonBaseInfoPage(private val viewModel: PersonBaseInfoViewModel, private
         ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
             BoxTextField(
                 text = viewModel.collage?.name ?: "",
-                placeholder = "Collage",
+                placeholder = "学院",
                 leadIcon = Icons.Filled.Apartment,
                 readOnly = true,
                 trailingIcon = {
@@ -105,7 +104,7 @@ class PersonBaseInfoPage(private val viewModel: PersonBaseInfoViewModel, private
         ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
             BoxTextField(
                 text = viewModel.major?.name ?: "",
-                placeholder = "Major",
+                placeholder = "专业",
                 leadIcon = Icons.Filled.Workspaces,
                 readOnly = true,
                 trailingIcon = {
@@ -132,14 +131,14 @@ class PersonBaseInfoPage(private val viewModel: PersonBaseInfoViewModel, private
         BoxTextField(
             text = viewModel.phone,
             onValueChange = { viewModel.phone = it },
-            placeholder = "Phone (Not Required)",
+            placeholder = "手机号 (非必填)",
             leadIcon = Icons.Filled.Phone,
             isError = !matchPhone(viewModel.phone)
         )
         BoxTextField(
             text = viewModel.wechat,
             onValueChange = { viewModel.wechat = it },
-            placeholder = "Wechat (Not Required)",
+            placeholder = "微信号 (非必填)",
             leadIcon = Icons.Filled.Message,
             isError = !matchWechat(viewModel.wechat)
         )

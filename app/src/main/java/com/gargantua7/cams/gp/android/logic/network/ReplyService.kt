@@ -32,4 +32,10 @@ interface ReplyService {
         @Header("session") session: String? = CAMSApplication.session.value
     ): NetworkResponse<NormalReply>
 
+    @POST("repair/reply/delete/{id}")
+    suspend fun deleteReplyById(
+        @Path("id") id: Long,
+        @Header("session") session: String? = CAMSApplication.session.value
+    ): NoResultResponse
+
 }

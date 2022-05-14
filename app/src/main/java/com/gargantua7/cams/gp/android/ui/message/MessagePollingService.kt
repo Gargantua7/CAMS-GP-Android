@@ -7,7 +7,6 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.gargantua7.cams.gp.android.CAMSApplication
@@ -56,7 +55,7 @@ class MessagePollingService : Service() {
                     }
                 }
             } catch (_: Throwable) {
-                Toast.makeText(this@MessagePollingService, "Network Error", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this@MessagePollingService, "Network Error", Toast.LENGTH_SHORT).show()
             }
         }
         return super.onStartCommand(intent, flags, startId)

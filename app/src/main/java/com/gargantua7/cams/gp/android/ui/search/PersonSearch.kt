@@ -16,7 +16,7 @@ class PersonSearch(override val viewModel: PersonSearchViewModel) : PersonsPage(
 
     override val id: String = "PersonSearch"
     override val title = "PersonSearch"
-    override val element = "Person"
+    override val element = "用户"
     override val mode = SearchViewModel.PERSON_FULL_MODE
 
     override lateinit var lazyItems: Flow<PagingData<Person>>
